@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastodon Featured Profiles</title>
+    <link rel="stylesheet" href="css/pico.min.css">
+    <link rel="stylesheet" href="css/pico.theme.pinkpanther.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="lib/vue.global.prod.js" defer></script>
+    <script src="mastodon.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+  <div id="app" >
+    <header class="container">
+      <nav>
+        <ul>
+          <li><strong>Mastodon Featured Profiles</strong></li>
+        </ul>
+        <ul v-if="mastodon && mastodon.loggedIn()">
+          <li><button @click="logout()">Logout</button></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="container">
+      <div v-if="mastodon && !mastodon.loggedIn()">
+        <p>
+        This starter kit provides examples of how to connect to Mastodon, display your profile, and manage your featured profiles, also known as endorsements or pin profiles.
+        </p>
+
+        <h3> Login with Mastodon</h3>
+
+        <label for="mastodon-instance">
+          What's your Mastodon instance?
+        </label>
+
+        <form @submit.prevent="login">
+          <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on"/>
+          <datalist id="servers">
+            <option>mastodon.social</option>
+            <option v-for="server in servers">{{ server.domain }}</option>
+          </datalist>
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    <div v-else>
+      <p>
+      This starter kit provides examples of how to connect to Mastodon, display your profile, and manage your featured profiles, also known as endorsements or pin profiles.
+      </p>
+      <article>
+        <summary>
+          <account :profile="this.my_account" :followed="this.my_followed" :loading_followed="this.loading_followed" :endorsements="this.my_endorsements"></account>
+        </summary>
+        <endorsements :endorsements="this.my_endorsements"></endorsements>
+        <followed :followed="this.my_followed" :loading_followed="this.loading_followed" :total_followed_loaded="this.total_followed_loaded"></followed>
+      </article>
+      Profile Data<br/>
+      <pre><code>{{ profile }}</code></pre>
+      Endorsements Data<br/>
+      <pre><code> {{ endorsements }}</code></pre>
+        </div>
+    </main>
+    <footer class="container">
+      <div>
+        Made by <a href="https://box464.com" target="_blank" rel="noopener">Jeff Sikes</a> (<a href="https://mastodon.social/@box464" rel="noopener" target="_blank">@box464</a>). Source (and more details) on <a class="underline text-green-800" href="https://github.com/jeffsikes/mastodon-threaded-replies">GitHub</a>.<br/>
+        <br/>
+      </div>
+    </footer>
+  </div>
+</body>
+<script type="text/x-template" id="account-template">
+  <div class="account">
+    <article>
+      <header>
+        <img :src="profile.header_static"/>
+      </header>
+      <div class="account-info grid">
+        <div>
+          <img class="avatar" :src="profile.avatar_static" :alt="profile.display_name" width="65" height="65"/>
+        </div>
+        <div>
+          <a :href="profile.url" target="_blank" rel="me noopener">
+            <span v-if="profile.display_name" class="account-display-name">{{ profile.display_name }}</span><br/>
+          </a>
+          <span><span v-if="profile.bot" alt="Bot Account">🤖 </span>{{profile.acct }}</span><br/>
+          <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span>, <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span>
+        </div>
+      </div>
+      <footer>
+        <div v-if="profile.note" class="account-note" v-html="profile.note"></div>
+      </footer>
+    </article>
+  </div>
+</script>
+<script type="text/x-template" id="endorsements-template">
+    <h2 style="margin-bottom:0px;">Endorsed Profiles</h2>
+    <div class="grid">
+      <div v-for="endorsement in endorsements" id="endorsements">
+          <article :id="endorsement.id" :key="endorsement.id">
+            <img :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50" />
+            <div>
+              <a :href="endorsement.url" target="_blank" rel="noopener">
+                <span v-if="endorsement.display_name">{{ endorsement.display_name }}</span><br/>
+                <span><span v-if="endorsement.bot" alt="Automated Account">🤖 </span>{{endorsement.acct }}</span><br/>
+            </a>
+          </div>
+          <footer>
+          <button @click="unpin(endorsement.id)">Remove</button>
+          </footer>
+          </article>
+      </div>
+    </div>
+  </script>
+  <script type="text/x-template" id="followed-template">
+    <label for="followed_search">Add an endorsement from your followed accounts</label>
+    <input id="search-input" type="search" v-model="searchValue" placeholder="Search for an account to endorse" />
+    <div v-if="loading_followed">
+      <p>Loading {{ total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
+    </div>
+    <div v-else>
+      <div class="followed-summary">
+        <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed accounts</p>
+        <em><button v-on:click="refresh()">Update Followed List</button></em>
+      </div>
+      <div class="followed-container" id="followed">
+        <article class="followed-account" v-for="account in filteredFollowed" :key="account.id" :id="account.id">
+          <img :src="account.avatar_static" :alt="account.display_name" width="50" height="50" style="float:left;" />
+          <div>
+            <a :href="account.url" target="_blank" rel="noopener">
+              <span v-if="account.display_name">{{ account.display_name }}</span><br/>
+              <span><span v-if="account.bot" alt="Automated Account">🤖 </span>{{account.acct }}</span><br/>
+            </a>
+          </div>
+          <footer>
+            <button v-on:click="pin(account.id)">Add</button>
+          </footer>
+      </article>
+    </div>
+  </div>
+</script>
+</html>
+

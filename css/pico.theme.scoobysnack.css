@@ -1,0 +1,32 @@
+/* PicoCSS Overrides */
+
+/* Scooby Snack Light scheme (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+    --primary: #4B0055;
+    --primary-hover: #4B0055;
+    --primary-focus: rgba(216, 27, 96, 0.125);
+    --background-color: #79AF30;
+    --card-background-color: #bcd797;
+    --card-sectionning-background-color: #bcd797;
+    --code-kbd-background-color: #bb5c37;
+    --muted-border-color: #d81b60;
+    --accordion-border-color: #d81b60;
+    --accordion-open-summary-color: #000000;
+    --accordion-close-summary-color: #000000;
+}
+
+[aria-busy] {
+    --loading-spinner-opacity: 0.0;
+}
+
+ 
+
+/* Pink (Common styles) */
+:root {
+    --form-element-active-border-color: var(--primary);
+    --form-element-focus-color: var(--primary-focus);
+    --switch-color: var(--primary-inverse);
+    --switch-checked-background-color: var(--primary);
+}

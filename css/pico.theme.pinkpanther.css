@@ -1,0 +1,34 @@
+/* PicoCSS Overrides */
+
+/* Pink Light scheme (Default) */
+/* Can be forced with data-theme="light" */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+    --primary: #d81b60;
+    --primary-hover: #c2185b;
+    --primary-focus: rgba(216, 27, 96, 0.125);
+    --background-color: #FFF1F3;
+    --card-background-color: #F5F5F5;
+    --card-sectionning-background-color: #FFFFFF;
+    --code-kbd-background-color: #CCC1C2;
+    --muted-border-color: #d81b60;
+    --accordion-border-color: #d81b60;
+    --accordion-open-summary-color: #000000;
+    --accordion-close-summary-color: #000000;
+    --progress-background-color: hsl(205deg, 18%, 86%);
+    --progress-color: var(--primary);
+}
+
+[aria-busy] {
+    --loading-spinner-opacity: 0.0;
+}
+
+ 
+
+/* Pink (Common styles) */
+:root {
+    --form-element-active-border-color: var(--primary);
+    --form-element-focus-color: var(--primary-focus);
+    --switch-color: var(--primary-inverse);
+    --switch-checked-background-color: var(--primary);
+}
