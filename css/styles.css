@@ -1,4 +1,55 @@
 
+/* Violet color for light color scheme (Default) */
+/* Can be forced with data-theme="light" */
+:root {
+    --pico-border-radius: .3rem;
+    --pico-font-size: 85%;
+    --pico-typography-spacing-vertical: 1.5rem;
+    --pico-form-element-spacing-vertical: 1rem;
+    --pico-form-element-spacing-horizontal: 1.25rem;
+  }
+  
+  [data-theme=light],
+:root:not([data-theme=dark]) {
+  --pico-text-selection-color: rgba(167, 128, 212, 0.25);
+  --pico-primary: #8352c5;
+  --pico-primary-background: #7540bf;
+  --pico-primary-underline: rgba(131, 82, 197, 0.5);
+  --pico-primary-hover: #6935b3;
+  --pico-primary-hover-background: #6935b3;
+  --pico-primary-focus: rgba(167, 128, 212, 0.25);
+  --pico-primary-inverse: #fff;
+}
+
+/* Violet color for dark color scheme (Auto) */
+/* Automatically enabled if user has Dark mode enabled */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --pico-text-selection-color: rgba(178, 144, 217, 0.1875);
+    --pico-primary: #b290d9;
+    --pico-primary-background: #7540bf;
+    --pico-primary-underline: rgba(178, 144, 217, 0.5);
+    --pico-primary-hover: #c9afe4;
+    --pico-primary-hover-background: #8352c5;
+    --pico-primary-focus: rgba(178, 144, 217, 0.25);
+    --pico-primary-inverse: #fff;
+  }
+}
+
+/* Violet color for dark color scheme (Forced) */
+/* Enabled if forced with data-theme="dark" */
+[data-theme=dark] {
+  --pico-text-selection-color: rgba(178, 144, 217, 0.1875);
+  --pico-primary: #b290d9;
+  --pico-primary-background: #7540bf;
+  --pico-primary-underline: rgba(178, 144, 217, 0.5);
+  --pico-primary-hover: #c9afe4;
+  --pico-primary-hover-background: #8352c5;
+  --pico-primary-focus: rgba(178, 144, 217, 0.25);
+  --pico-primary-inverse: #fff;
+}
+
+
 body > * {
     flex-shrink: 0;
 }
@@ -16,11 +67,6 @@ body > * {
     flex-grow: 1; 
 }
 
-.avatar-container {
-    display:inline-flex;
-    justify-content:center;
-    align-items: center;
-}
 
 .account-container {
     font-size:smaller; 
@@ -29,27 +75,14 @@ body > * {
 
 }
 
-.timeline_header {
-    margin-bottom: 5px;
-}
-
-summary {
-    padding-top: 10px;
-    padding-bottom:10px;
-    margin-bottom: 10px;
+.avatar-container {
+    display:inline-flex;
+    justify-content:center;
+    align-items: center;
 }
 
 .account-summary {
     display:flex;
-}
-
-.nav_timeline {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.nav_timeline li { 
-    white-space: nowrap; 
 }
 
 img.avatar {
@@ -58,118 +91,12 @@ img.avatar {
     margin-botton:10px;
 }
 
-.media_container {
-    display:flex; 
-    flex-wrap: wrap ; 
-    justify-content: left;
-    margin-bottom:0px;
+summary {
+    padding-top: 10px;
+    padding-bottom:10px;
+    margin-bottom: 10px;
 }
 
-.media_container:nth-child(2n) {
-    flex-basis: 100%;
-}
-
-img.media_attachment {
-     display: inline-block;
-     max-width:100%
-     height:auto;
-     margin-bottom: 20px;
-     position: relative;
-}
-
-video.media_attachment {
-    max-width: 100%;
-    margin-bottom: 20px;
-    height: auto;
-}
-
-article.audio_attachment {
-    text-align: center !important;
-    margin-bottom: 20px;
- }
-
-.badge-favorite {
-   color:red;
-}
-
-
-details.debug {
-    margin-top:10px;
-    padding-left:15px;
-    padding-right:10px;
-    padding-top:15px;
-    border: solid 1px var(--accordion-border-color);
-    padding-bottom:0px;
-    border-radius: 25px;
-
-}
-
-details.debug summary {
-    font-weight: bold;
-}
-
-details.debug summary a {
-    margin-left:10px;
-}
-
-details.debug pre {
-    height:300px;
-}
-
-.card img {
-    width:100%;
-    height:100%;
-    object-fit: fill;
-    border-radius: 5px 5px 0 0;
-}
-
-.card article {
-    padding: 0px;
-    margin-top:0px;
-    margin-bottom:15px;
-}
-
-.card article footer {
-    margin: 0px;
-}
-
-.card a:link, .card a:visited, .card a:hover, a:focus, a:active, p {
-    text-decoration:none;
-    color: black !important;
-}
-
-.card p {
-    margin: 0px;
-}
-
-.card p.provider {
-    font-weight: lighter;
-}
-
-.card p.title {
-    font-weight: bold;
-}
-
-.card-no-image {
-    display:flex;
-    align-items: center;
-    justify-content: center;
-    border-top: solid 4px var(--primary);
-}
-
-.card-no-image footer {
-    border-top: 0px;
-    width:100%;
-}
-
-.card-no-image-icon {
-    margin:20px;
-    margin-left:25px;
-    margin-right:25px;
-    font-size: 6vw;
-    height:100%;
-    
-}
 
 .api_docs_container {
     display: flex;
@@ -188,92 +115,8 @@ details.debug pre {
     text-decoration: none;
 }
 
-.view_original_post {
-  margin-top:15px;
-}
-
-.interaction-badge-container {
-    margin-top:10px; 
-}
-
-.interaction-badge {
-    display: inline-block;
-    margin-right: 15px;
-    border: solid 1px black;
-    background-color: #FFF1F3;
-    border-radius: 5px;
-    padding: 5px;
-    margin-top: 10px;
-}
-
-.interaction-badge div {
-    display: inline-block;
-    margin-right: 15px;
-}
-
-
-progress {
-    text-align:center;
-    margin-top: 50px;
-    margin-bottom: 300px;
-}
-
-.no-results header {
-    font-size: clamp(18px, 5vw, 25px);
-    font-weight:bold;
-}
-
-.no-results-body {
-    display:flex; 
-    flex-wrap:nowrap;
-    align-items:center;
-    align-content: center; 
-    padding:20px;
-    font-size: clamp(16px, 4vw, 22px);;
-}
-
-.no-results-icon {
-    font-size:15vw;margin-right:40pt;
-}
-
-.poll-option {
-    margin-bottom: 20px;
-}
-
-.poll-option-title {
-    font-weight: bold;
-    font-style: normal;
-}
-
-.poll-note {
-    margin-top:10px;
-    border-radius: 5px;
-    background-color: #FFF1F3;
-    padding:20px;
-}
-
-.poll article {
-    margin-top:0px; 
-    margin-bottom:0px;
-}
-
-
-progress.poll-option-bar {
-    margin-top:0px;
-    margin-bottom: 0px;
-}
-
-.poll-option-summary {
-    font-weight: bold;
-    font-style:italic;
-    margin-bottom: 0px;
-}
-
-.poll-option-winner {
-    --progress-color: green;
-}
-
-.post-reblog {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
+.border-shadow {
+    border-radius:.50em;
+    margin:20px;
+    box-shadow: 0px 0px 19px #CD68E0;
+  }

@@ -27,7 +27,13 @@ var app = Vue.createApp({
         });
 
         if (!this.mastodon.loggedIn()) {
-            this.servers = await this.get_servers();
+            console.log('not logged in');
+            if (localStorage.mastodon_servers != null) {
+                this.servers = JSON.parse(localStorage.mastodon_servers);
+            }
+            else {
+                this.servers = await this.get_servers();
+            }
             return;
         }
         servers = [];
@@ -41,10 +47,18 @@ var app = Vue.createApp({
 
         if (localStorage.my_followed) {
             this.my_followed = JSON.parse(localStorage.my_followed);
+
+            const endorsements = this.my_endorsements;
+            const endorsements_ids = endorsements.map(item => item.id);
+
+            this.my_followed.forEach((item, index) => {
+                if (endorsements_ids.includes(item.id)) {
+                    this.my_followed.splice(index, 1);
+                }
+            });        
         }
         else {
             this.my_followed = await this.get_followed(this.user_id);
-            localStorage.my_followed = JSON.stringify(this.my_followed);
         }
 
         console.log('my_account', this.my_account);
@@ -65,6 +79,7 @@ var app = Vue.createApp({
             this.mastodon.logout();
             localStorage.removeItem('my_followed');
             window.location.hash = "";
+            window.location.reload();
         },
 
         async set_spinner(toggle) {
@@ -166,6 +181,7 @@ var app = Vue.createApp({
 
             this.$root.loading_followed = false;
             this.$root.total_followed_loaded = data.length;
+            localStorage.my_followed = JSON.stringify(data);
 
             return data;
         },
