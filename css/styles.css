@@ -54,6 +54,31 @@ body > * {
     flex-shrink: 0;
 }
 
+.endorsed-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    column-gap: 30px;
+
+}
+
+.endorsed-container article {
+    width: 200px;
+    flex-basis: 200px;
+    flex-grow: 1;
+}
+
+.endorsed-container article p {
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    word-break:  break-all;
+    min-width:0px;
+}
+
+
+
 .followed-container {
     display: flex;
     flex-wrap: wrap;
@@ -63,8 +88,19 @@ body > * {
 
 }
 
-.followed-container article {
-    flex-grow: 1; 
+
+.endorsed-container article {
+    width: 200px;
+    flex-basis: 200px;
+    flex-grow: 1;
+}
+
+.followed-container article p {
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    word-break:  break-all;
+    min-width:0px;
 }
 
 
@@ -80,6 +116,15 @@ body > * {
     justify-content:center;
     align-items: center;
 }
+
+.account-placeholder {
+    width: 200px;
+    height: 2px;
+    margin: 5px;
+    
+    flex-basis: 200px;
+    flex-grow: 1;
+  }
 
 .account-summary {
     display:flex;
@@ -120,3 +165,10 @@ summary {
     margin:20px;
     box-shadow: 0px 0px 19px #CD68E0;
   }
+
+  .endorsed .account-info {
+    background-color: rgba(0, 0, 0, 0.85); 
+    padding: 15px; 
+    border-radius: 0.5em;
+    
+}

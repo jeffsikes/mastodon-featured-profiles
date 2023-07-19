@@ -73,10 +73,10 @@
           <img class="avatar" style="opacity:100%;" :src="profile.avatar_static" :alt="profile.display_name" width="100" height="100"/>
         </div>
         <div style="padding-top:10px;">
-          <a :href="profile.url" target="_blank" rel="me noopener">
             <span v-if="profile.display_name" class="account-display-name" style="font-size:larger;">{{ profile.display_name }}</span><br/>
-          </a>
-          <span><span v-if="profile.bot" alt="Bot Account">🤖 </span>{{profile.acct }}</span><br/>
+            <a :href="profile.url" target="_blank" rel="me noopener">
+              <span v-if="profile.bot" alt="Bot Account">🤖 </span>@{{profile.acct }}<br/>
+            </a>
           <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span>, <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span>
         </div>
       </div>
@@ -86,32 +86,29 @@
   </article>
   </div>
 </script>
+
 <script type="text/x-template" id="endorsements-template">
     <h2 style="margin-bottom:20px;">Pinned Profiles</h2>
-    <div class="grid">
-      <div class="border-shadow" v-for="endorsement in endorsements" id="endorsements">
-        <article :id="endorsement.id" :key="endorsement.id" style="padding:0px;">
-          <header style="padding:0px;">
-            <img :src="endorsement.header_static" style="border-radius:0.5em;"/>
-          </header>
-          <div class="account-info grid" style="position: relative; top: -150px; background-color: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 0.5em;">
-            <div>
-              <img class="avatar" style="opacity:100%;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
-            </div>
-            <div style="padding-top:10px;">
+    <div class="endorsed-container">
+        <article class="border-shadows endorsed item" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
+          <div class="account-info">
+            <img class="avatar" style="opacity:100%;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
+              <p style="text-overflow: ellipsis;  white-space:nowrap;word-break:break-all;" v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
+              <p style="text-overflow: ellipsis;white-space:nowrap;word-break:break-all;">
               <a :href="endorsement.url" target="_blank" rel="me noopener">
-                <span v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</span>
+                <span  v-if="endorsement.bot" alt="Bot Account">🤖 </span>@{{endorsement.acct }}<br/>
               </a>
-            </div>
+            </p>
           </div>
-          <footer>
+          <footer style="background-color:white;">
             <button @click="unpin(endorsement.id)">Unpin</button>
-            </footer>
+          </footer>
         </article>
-
-      </div>
+        <article class="account-placeholder"></article>
+        <article class="account-placeholder"></article>
     </div>
   </script>
+
   <script type="text/x-template" id="followed-template">
     <label for="followed_search"><h2 style="margin-top:20px;">Add an endorsement from your followed accounts</h2></label>
     <input id="search-input" type="search" v-model="searchValue" placeholder="Search for an account to endorse" />
@@ -130,9 +127,9 @@
               <img class="avatar" :src="account.avatar_static" :alt="account.display_name" width="50" height="50" style="float:left;" />
             </div>
             <div>
-                <span v-if="account.display_name">{{ account.display_name }}</span><br/>
+                <p v-if="account.display_name">{{ account.display_name }}</p>
                 <a :href="account.url" target="_blank" rel="noopener">
-                  <span><span v-if="account.bot" alt="Automated Account">🤖 </span>{{account.acct }}</span>
+                  <p v-if="account.bot" alt="Automated Account">🤖 {{account.acct }}</p>
               </a>
             </div>
           </header>
@@ -140,7 +137,9 @@
             <button v-on:click="pin(account.id)">Pin</button>
           </footer>
       </article>
-    </div>
+      <article class="account-placeholder"></article>
+      <article class="account-placeholder"></article>
+  </div>
   </div>
 </script>
 </html>
