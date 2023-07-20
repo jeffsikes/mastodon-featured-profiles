@@ -57,7 +57,7 @@ body > * {
 .endorsed-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: stretch;
     column-gap: 30px;
 
@@ -74,10 +74,8 @@ body > * {
     overflow:hidden;
     text-overflow: ellipsis;
     word-break:  break-all;
-    min-width:0px;
+    margin-bottom:2px;
 }
-
-
 
 .followed-container {
     display: flex;
@@ -85,9 +83,24 @@ body > * {
     justify-content: flex-start;
     align-items: stretch;
     column-gap: 30px;
-
 }
 
+.account-info {
+    margin:-8px;
+}
+
+.low-opacity {
+    position: relative;
+    isolation: isolate;
+}
+
+.low-opacity::after {
+    content: '';
+    position:absolute;
+    z-index: -1;
+    inset: 0;
+    opacity: 0.2;
+}
 
 .endorsed-container article {
     width: 200px;

@@ -90,23 +90,23 @@
 <script type="text/x-template" id="endorsements-template">
     <h2 style="margin-bottom:20px;">Pinned Profiles</h2>
     <div class="endorsed-container">
-        <article class="border-shadows endorsed item" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
-          <div class="account-info">
-            <img class="avatar" style="opacity:100%;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
-              <p style="text-overflow: ellipsis;  white-space:nowrap;word-break:break-all;" v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
-              <p style="text-overflow: ellipsis;white-space:nowrap;word-break:break-all;">
+        <article class="border-shadows endorsed item low-opacity" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
+          <div class="account-info" style="text-align:center;">
+            <img class="avatar" style="opacity:100%;margin-bottom:10px;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
+            <div>
+              <p v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
               <a :href="endorsement.url" target="_blank" rel="me noopener">
-                <span  v-if="endorsement.bot" alt="Bot Account">🤖 </span>@{{endorsement.acct }}<br/>
+                <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span>@{{ endorsement.acct }}</p>
               </a>
-            </p>
           </div>
-          <footer style="background-color:white;">
+          </div>
+          <footer style="text-align:center;">
             <button @click="unpin(endorsement.id)">Unpin</button>
           </footer>
         </article>
         <article class="account-placeholder"></article>
         <article class="account-placeholder"></article>
-    </div>
+      </div>
   </script>
 
   <script type="text/x-template" id="followed-template">
