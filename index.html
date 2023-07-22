@@ -48,7 +48,7 @@
       <div v-else>
         <article>
           <account :profile="this.my_account" :followed="this.my_followed" :loading_followed="this.loading_followed" :endorsements="this.my_endorsements"></account>
-          <endorsements style="border-radius:.5;" :endorsements="this.my_endorsements"></endorsements>
+          <endorsements :endorsements="this.my_endorsements"></endorsements>
           <followed :followed="this.my_followed" :loading_followed="this.loading_followed" :total_followed_loaded="this.total_followed_loaded"></followed>
         </article>
         </div>
@@ -90,30 +90,28 @@
 <script type="text/x-template" id="endorsements-template">
     <h2 style="margin-bottom:20px;">Pinned Profiles</h2>
     <div class="endorsed-container">
-        <article class="border-shadows endorsed item low-opacity" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
+        <article class="border-shadows endorsed item low-opacity" v-if="endorsements.length > 0" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
           <div class="account-info" style="text-align:center;">
             <img class="avatar" style="opacity:100%;margin-bottom:10px;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
             <div>
               <p v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
-              <a :href="endorsement.url" target="_blank" rel="me noopener">
-                <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span>@{{ endorsement.acct }}</p>
-              </a>
+              <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
           </div>
-          </div>
-          <footer style="text-align:center;">
-            <button @click="unpin(endorsement.id)">Unpin</button>
-          </footer>
-        </article>
+          <div style="margin-top:10px;text-align:center;">
+            <button class="secondary" @click="unpin(endorsement.id)">Unpin</button>
+            <div>
+            </div>
+      </article>
         <article class="account-placeholder"></article>
         <article class="account-placeholder"></article>
-      </div>
+    </div>
   </script>
 
   <script type="text/x-template" id="followed-template">
     <label for="followed_search"><h2 style="margin-top:20px;">Add an endorsement from your followed accounts</h2></label>
     <input id="search-input" type="search" v-model="searchValue" placeholder="Search for an account to endorse" />
     <div v-if="loading_followed">
-      <p>Loading {{ total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
+      <p>Loading {{ this.$root.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
     </div>
     <div v-else>
       <div class="followed-summary">
@@ -121,26 +119,20 @@
         <em><button v-on:click="refresh()">Update Followed List</button></em>
       </div>
       <div class="followed-container" id="followed">
-        <article class="followed-account" v-for="account in filteredFollowed" :key="account.id" :id="account.id" style="max-width:33%;">
-          <header>
-            <div class="avatar-container">
-              <img class="avatar" :src="account.avatar_static" :alt="account.display_name" width="50" height="50" style="float:left;" />
-            </div>
-            <div>
-                <p v-if="account.display_name">{{ account.display_name }}</p>
-                <a :href="account.url" target="_blank" rel="noopener">
-                  <p v-if="account.bot" alt="Automated Account">🤖 {{account.acct }}</p>
-              </a>
-            </div>
-          </header>
+        <article class="followed-account followed-item" v-for="account in filteredFollowed" :key="account.id" :id="account.id" >
+          <img :src="account.avatar_static" :alt="account.display_name" />
+          <div><span v-if="account.bot" alt="Automated Account">🤖 </span>{{ account.display_name }}</div>
+          <div>
+            <a :href="account.url" target="_blank" rel="noopener">{{ account.acct }}</a>
+          </div>
           <footer>
-            <button v-on:click="pin(account.id)">Pin</button>
+        <div class="pin"><button v-on:click="pin(account.id)">Pin</button></div>
           </footer>
       </article>
+
       <article class="account-placeholder"></article>
       <article class="account-placeholder"></article>
-  </div>
-  </div>
-</script>
+    </div>
+  </script>
 </html>
 
