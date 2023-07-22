@@ -98,15 +98,6 @@ body > * {
     flex-grow: 1;
 }
 
-.followed-container article p {
-    white-space: nowrap;
-    overflow:hidden;
-    text-overflow: ellipsis;
-    word-break:  break-all;
-    min-width:0px;
-}
-
-
 .account-container {
     font-size:smaller; 
     line-height:1.2;
@@ -139,46 +130,73 @@ img.avatar {
     margin-botton:10px;
 }
 
+
 .followed-container {
     display:flex; 
     flex-flow: row wrap;
     justify-content: space-evenly;
     align-content:flex-start;
     gap: 5px 15px;
-  }
+    
+}
+
+.followed-container article {
+    width: 200px;
+    flex-basis: 200px;
+    flex-grow: 1;
+}
   
-  .followed-item img {
+.followed-container article div {
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    word-break:  break-all;
+    min-width:0px;
+}
+
+.followed-item img {
     float:left;
     width: 50px;
     height: 50px;
-  }
-  
-  .followed-item {
+}
+
+.followed-item {
     min-width: 0;
     max-width:500px;
     padding-bottom:25px;
-  }
-  
-  .followed-item div {
+}
+
+.followed-item div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  
-  .followed-item img {
+    word-break:  break-all;
+}
+
+.followed-item img {
     border-radius: 0.5em;
     margin-right: 15px;
     margin-bottom: 2px;
-  }
+}
   
-  .followed-item div.pin {
+.followed-item div.pin {
     text-align: center;
-  }
-  
-  .followed-item button {
+}
+
+.followed-item button {
     padding: 10px 20px 10px 20px;
     font-size:smaller;
-  }
+}
+
+.followed-placeholder {
+    width: 250px;
+    height: 2px;
+    margin: 20px;
+    
+    flex-basis: 250px;
+    flex-grow: 1;
+    visibility: hidden;
+ }
 
 summary {
     padding-top: 10px;
@@ -207,7 +225,7 @@ summary {
 .border-shadow {
     border-radius:.50em;
     margin:20px;
-    box-shadow: 0px 0px 19px #CD68E0;
+    box-shadow: 0px 0px 19px #9236A4;
   }
 
   .endorsed .account-info {

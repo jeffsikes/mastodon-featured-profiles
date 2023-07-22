@@ -18,7 +18,7 @@
           <nav>
             <ul>
               <li>
-                <h2>Mastodon Labs</h2>
+                <h1>Mastodon Labs</h1>
               </li>
             </ul>
             <ul>
@@ -33,23 +33,28 @@
           <div v-if="mastodon && !mastodon.loggedIn()">
           <h3> Login with Mastodon</h3>
   
-          <label for="mastodon-instance">
-            What's your Mastodon instance?
-          </label>
-  
           <form @submit.prevent="login">
-            <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on"/>
+            <label id="mastodon-instance-label" for="mastodon-instance">
+              What's your Mastodon instance?
+            </label>
+              <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on" aria-label="Your Mastodon Instance" aria-describedby="mastodon-instance-label" />
             <datalist id="servers">
               <option v-for="server in servers">{{ server.domain }}</option>
             </datalist>
+
+            <label>
+              <input id="mastodon-read-only-scope" v-model="read_only" type="checkbox" role="switch"  />
+              Authorize read-only access to my account. This will prevent you from adding and removing pins, but will allow you to see your existing pinned profiles.
+            </label>
+
             <button type="submit">Login</button>
           </form>
         </div>
       <div v-else>
         <article>
           <account :profile="this.my_account" :followed="this.my_followed" :loading_followed="this.loading_followed" :endorsements="this.my_endorsements"></account>
-          <endorsements :endorsements="this.my_endorsements"></endorsements>
-          <followed :followed="this.my_followed" :loading_followed="this.loading_followed" :total_followed_loaded="this.total_followed_loaded"></followed>
+          <endorsements :endorsements="this.my_endorsements" :loading_endorsements="this.loading_endorsements" :total_endorsements_loaded="this.total_endorsements_loaded"></endorsements>
+          <followed v-if="this.userPreferences.read_only == false" :followed="this.my_followed" :loading_followed="this.loading_followed" :total_followed_loaded="this.total_followed_loaded"></followed>
         </article>
         </div>
       </main>
@@ -59,7 +64,7 @@
           <br/>
         </div>
       </footer>
-      </div>
+    </div>
   </div>
 </body>
 <script type="text/x-template" id="account-template">
@@ -89,49 +94,62 @@
 
 <script type="text/x-template" id="endorsements-template">
     <h2 style="margin-bottom:20px;">Pinned Profiles</h2>
-    <div class="endorsed-container">
-        <article class="border-shadows endorsed item low-opacity" v-if="endorsements.length > 0" v-for="endorsement in endorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
-          <div class="account-info" style="text-align:center;">
-            <img class="avatar" style="opacity:100%;margin-bottom:10px;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
-            <div>
-              <p v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
-              <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
-          </div>
-          <div style="margin-top:10px;text-align:center;">
-            <button class="secondary" @click="unpin(endorsement.id)">Unpin</button>
-            <div>
+    <label for="endorsed_search"><h2 style="margin-top:20px;">Search your pins</h2></label>
+    <div v-if="loading_endorsements == true">
+      <p>Loading {{ this.$root.total_endorsements_loaded }} of {{ this.$root.my_endorsements.length }} endorsed accounts...</p>
+    </div>
+    <div v-else>
+      <div>
+        <input id="search-input-endorsed" type="search" v-model="searchValue" placeholder="Search your endorsed accounts." />
+        <div class="endorsed-summary">
+          <p>Showing {{ filteredEndorsements.length }} of {{ this.$root.my_endorsements.length  }} endorsed accounts</p>
+          <em><button v-on:click="refresh()">Update Endorsed List</button></em>
+        </div>
+      </div>
+      <div class="endorsed-container">
+          <article class="border-shadows endorsed item low-opacity"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" style="border-radius:.5em;background-color:#858AFA;" :style="{backgroundImage: `url(${endorsement.header_static})`}">
+            <div class="account-info" style="text-align:center;">
+              <img class="avatar" style="opacity:100%;margin-bottom:10px;" :src="endorsement.avatar_static" :alt="endorsement.display_name" width="50" height="50"/>
+              <div>
+                <p v-if="endorsement.display_name" class="account-display-name" style="font-size:larger;">{{ endorsement.display_name }}</p>
+                <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
             </div>
-      </article>
-        <article class="account-placeholder"></article>
-        <article class="account-placeholder"></article>
+            <div v-if="this.$root.read_only == false" style="margin-top:10px;text-align:center;">
+              <button class="secondary" @click="unpin(endorsement.id)">Unpin</button>
+              <div>
+              </div>
+        </article>
+          <article class="account-placeholder"></article>
+          <article class="account-placeholder"></article>
+      </div>
     </div>
   </script>
 
   <script type="text/x-template" id="followed-template">
-    <label for="followed_search"><h2 style="margin-top:20px;">Add an endorsement from your followed accounts</h2></label>
-    <input id="search-input" type="search" v-model="searchValue" placeholder="Search for an account to endorse" />
-    <div v-if="loading_followed">
+    <label for="followed_search"><h2 style="margin-top:20px;">Add an pin from your followed accounts</h2></label>
+    <div v-if="loading_followed == true">
       <p>Loading {{ this.$root.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
     </div>
     <div v-else>
+      <input id="search-input" type="search" v-model="searchValue" placeholder="Search for an account to pin" />
       <div class="followed-summary">
         <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_followed.length  }} followed accounts</p>
         <em><button v-on:click="refresh()">Update Followed List</button></em>
       </div>
       <div class="followed-container" id="followed">
-        <article class="followed-account followed-item" v-for="account in filteredFollowed" :key="account.id" :id="account.id" >
+        <article class="followed-account followed-item border-shadow" v-for="account in filteredFollowed" :key="account.id" :id="account.id" >
           <img :src="account.avatar_static" :alt="account.display_name" />
-          <div><span v-if="account.bot" alt="Automated Account">🤖 </span>{{ account.display_name }}</div>
+          <div><span v-if="account.bot" alt="Automated Account">🤖 </span><span>{{ account.display_name }}</span></div>
           <div>
             <a :href="account.url" target="_blank" rel="noopener">{{ account.acct }}</a>
           </div>
           <footer>
-        <div class="pin"><button v-on:click="pin(account.id)">Pin</button></div>
+        <div  class="pin"><button v-on:click="pin(account.id)">Pin</button></div>
           </footer>
       </article>
 
-      <article class="account-placeholder"></article>
-      <article class="account-placeholder"></article>
+      <article class="followed-placeholder"></article>
+      <article class="followed-placeholder"></article>
     </div>
   </script>
 </html>
