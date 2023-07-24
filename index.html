@@ -90,7 +90,8 @@
               <a :href="profile.url" target="_blank" rel="me noopener">
                 <span v-if="profile.bot" alt="Bot Account">🤖 </span>@{{profile.acct }}<br/>
               </a>
-            <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span>, <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span>
+            <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span><span class="account-followers" v-else>0 Followers</span>, 
+            <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span><span v-else class="account-following">0 Following</span>
             <div class="profile-note">
               <span v-if="profile.note" class="account-note" v-html="profile.note"></span>
             </div>
@@ -102,20 +103,36 @@
 </script>
 
 <script type="text/x-template" id="endorsements-template">
-    <h2>Featured Profiles</h2>
+    <h2 style="padding-top:20px;">Featured Profiles</h2>
     <div v-if="loading_endorsements == true">
       <p>Loading {{ this.$root.total_endorsements_loaded }} of {{ this.$root.my_endorsements.length }} featured profiles...</p>
     </div>
     <div v-else>
       <div v-if="this.$root.my_endorsements.length > this.$root.max_displayed_endorsements">
-        <p class="highlight">You have {{ this.$root.my_endorsements.length }} profile endorsements.</p>
+        <p class="highlight">You have {{ this.$root.my_endorsements.length }} featured profiles.</p>
         <p id="endorsed-descritpion">The first {{ this.filteredEndorsements.length }} are displayed. Search for a specific profile, or display them all.</p>
         <input id="search-input-endorsed" type="search" v-model="searchValue" placeholder="Search your featured profiles" aria-label="Search Featured Profiles" aria-describedby="endorsed-description" />
         <div class="endorsed-summary">
           Found {{ filteredEndorsements.length }} accounts that match.</p>
         </div>
       </div>
-      <div class="endorsed-container">
+      <div class="endorsed-container gird">
+        <div v-if="this.endorsements.length == 0">
+          <hgroup v-if="this.read_only == false">
+            <h4>You have no featured profiles.</h4>
+            <p>Search your followed accounts for a profile to feature.</p>
+          </hgroup>
+          <div v-else>
+            <h5>Want to set your featured profiles with this app?</h5>
+            <p>Log out and leave the "Authorize read-only access" toggle turned off, then log back in.</p>
+            <hr/>
+            <h5>Want to feature a profile without giving this application access? </h5>
+            <p>Browse your followed profiles on your official Mastodon instance website.</p>
+            <p>In the more options menu of a followed account, choose "Feature on profile"</p>
+            <p>Refresh this application.</p>
+          </div>
+
+        </div>
         <article class="endorsed item"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
           <div class="account-info">
             <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name"/>
@@ -124,10 +141,11 @@
               <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
             </div>
             <div class="endorsed-action" v-if="this.$root.read_only == false">
-              <button class="secondary unpin" @click="unpin(endorsement.id)">Remove</button>
+              <button class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
             </div>
           </div>
         </article>
+        <article class="account-placeholder"></article>
         <article class="account-placeholder"></article>
         <article class="account-placeholder"></article>
       </div>

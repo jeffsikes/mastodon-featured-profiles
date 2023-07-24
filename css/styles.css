@@ -56,7 +56,6 @@ body > * {
 
 .root {
     max-width:950px;
-    min-width:690px;
 }
 
 form {
@@ -84,6 +83,7 @@ header .banner {
     border-radius:0.5em;
     height:250px;
     background-size:100%;
+    background-color:#2F0C7A;
 }
 
 .profile-note {
@@ -191,7 +191,6 @@ button .refresh {
 img.avatar {
     border-radius: 50%;
     margin-right:10px;
-    margin-bottom:10px;
 }
 
 .followed-container {

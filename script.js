@@ -7,8 +7,8 @@ var app = Vue.createApp({
         return {
             server: "",
             servers: [],
-            mastodon: undefined,
             read_only: false,
+            mastodon: undefined,
             my_account: [],
             my_endorsements: [],
             my_followed: [],
@@ -19,14 +19,15 @@ var app = Vue.createApp({
             total_endorsements_loaded: 0,
             max_retrieval_count: 80,
             max_displayed_endorsements: 15,
+            refresh_interval: 2, // minutes
             followed_search: "",
         }
     },
 
     computed: {
         computedAuthorizedScope() {
-            console.log("read only value", this.read_only);
-            return this.read_only ? "read:accounts read:follows" : "read:accounts write:accounts read:follows";
+            console.log("read only value", this.userPreferences.read_only);
+            return this.userPreferences.read_only ? "read:accounts read:follows" : "read:accounts write:accounts read:follows";
         },
     },
 
@@ -36,7 +37,7 @@ var app = Vue.createApp({
             app_url: 'https://featured-profiles.netlify.app/',
             // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
 
-            scopes: (this.userPreferences.read_only ? 'read:accounts read:follows': 'read:accounts write:accounts read:follows'),
+            scopes: (this.read_only ? 'read:accounts read:follows': 'read:accounts write:accounts read:follows'),
         });
 
         if (!this.mastodon.loggedIn()) {
@@ -52,31 +53,24 @@ var app = Vue.createApp({
         else {
             this.user_id = await this.get_user_id();
 
-            var forceRefresh = false;
-
             // If userPreferences.last_refresh is more than 1 hour ago, refresh the data.
             if (this.userPreferences && this.userPreferences.last_refresh != null) {
+                var forceRefresh = false;
                 const lastRefresh = new Date(this.userPreferences.last_refresh);
                 const now = new Date();
                 const diff = now - lastRefresh;
                 const minutes = Math.floor((diff/1000)/60);
-                if (minutes > 60) {
+                if (minutes > this.refresh_interval) {
                     forceRefresh = true;
                 }
-                else {
-                    this.refresh(this.user_id, false);
-                }
             }
-            else {
-                this.refresh(this.user_id, false);
-            }
+
+            this.refresh(this.user_id, true);
+
         }
 
     },
 
-    async mounted() {
-        this.read_only = this.userPreferences.read_only;
-    },
     computed: {
         userPreferences() {
             if (localStorage.userPreferences) {
@@ -94,7 +88,7 @@ var app = Vue.createApp({
             localStorage.my_followed = newFollowed;
         },
         read_only(newValue) {
-            this.userPreferences.read_only = newValue;
+            localStorage.userPreferences = JSON.stringify({read_only: newValue, server: localStorage.server, last_refresh: localStorage.last_refresh});
         }
     },
 
@@ -107,7 +101,7 @@ var app = Vue.createApp({
             this.my_account = await this.get_account(userId);
 
             const [followed, account, endorsements] = await Promise.all([
-                this.get_followed(userId, forceRefresh, this.read_only).then((data) => { this.loading_followed = false; return data; }), 
+                this.get_followed(userId, forceRefresh, this.userPreferences.read_only).then((data) => { this.loading_followed = false; return data; }), 
                 this.get_account(userId, forceRefresh),
                 this.get_account_endorsements(forceRefresh).then((data) => { this.loading_endorsements = false; return data; }),
             ]);
@@ -126,7 +120,7 @@ var app = Vue.createApp({
             this.my_followed = followed;
             
             // Set last refresh date.
-            localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: this.server, last_refresh: new Date()});
+            localStorage.userPreferences = JSON.stringify({read_only: this.userPreferences.read_only, server: this.server, last_refresh: new Date()});
 
             console.log('my_account', this.my_account);
             console.log('my_endorsements', this.my_endorsements);
@@ -348,7 +342,7 @@ var app = Vue.createApp({
 
                 console.log(this.computedAuthorizedScope);
 
-                if (this.read_only) {
+                if (this.userPreferences.read_only == true) {
                     this.mastodon = await Mastodon.initialize({
                         app_name: 'Featured Profiles Lab',
                         app_url: 'https://featured-profiles.netlify.app/',
@@ -358,7 +352,7 @@ var app = Vue.createApp({
             
                 }
 
-                localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: server, last_refresh: new Date()});
+                localStorage.userPreferences = JSON.stringify({read_only: this.userPreferences.read_only, server: server, last_refresh: new Date()});
                 
                 //this.options.scopes = this.computedAuthorizedScope;
 
