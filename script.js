@@ -17,6 +17,8 @@ var app = Vue.createApp({
             loading_endorsements: true,
             total_followed_loaded: 0,
             total_endorsements_loaded: 0,
+            max_retrieval_count: 80,
+            max_displayed_endorsements: 15,
             followed_search: "",
         }
     },
@@ -25,12 +27,12 @@ var app = Vue.createApp({
         computedAuthorizedScope() {
             console.log("read only value", this.read_only);
             return this.read_only ? "read:accounts read:follows" : "read:accounts write:accounts read:follows";
-        }
+        },
     },
 
-    async mounted() {
+    async created() {
         this.mastodon = await Mastodon.initialize({
-            app_name: 'Featured Profiles Lab (Read+Write)',
+            app_name: 'Featured Profiles Lab',
             app_url: 'https://featured-profiles.netlify.app/',
             // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
 
@@ -48,38 +50,32 @@ var app = Vue.createApp({
             return;
         }
         else {
-            this.loading_followed = true;
-            this.loading_endorsements = true;
-
             this.user_id = await this.get_user_id();
-    
-            this.my_account = await this.get_account(this.user_id);
-    
-            const [followed, account, endorsements1] = await Promise.all([this.get_followed(this.user_id), this.get_account(this.user_id),this.get_account_endorsements()]);
-    
-            this.my_account = account;
-            this.my_endorsements = endorsements1;
-            this.my_followed = followed;
-    
-            this.loading_endorsements = false;
 
-            const endorsements = this.my_endorsements;
-            const endorsements_ids = endorsements.map(item => item.id);
-    
-            this.my_followed.forEach((item, index) => {
-                if (endorsements_ids.includes(item.id)) {
-                    this.my_followed.splice(index, 1);
+            var forceRefresh = false;
+
+            // If userPreferences.last_refresh is more than 1 hour ago, refresh the data.
+            if (this.userPreferences && this.userPreferences.last_refresh != null) {
+                const lastRefresh = new Date(this.userPreferences.last_refresh);
+                const now = new Date();
+                const diff = now - lastRefresh;
+                const minutes = Math.floor((diff/1000)/60);
+                if (minutes > 60) {
+                    forceRefresh = true;
                 }
-            });        
-    
-            console.log('my_account', this.my_account);
-            console.log('my_endorsements', this.my_endorsements);
-            console.log('my_followed', this.my_followed);
-    
-            this.loading_followed = false;
-    
+                else {
+                    this.refresh(this.user_id, false);
+                }
+            }
+            else {
+                this.refresh(this.user_id, false);
+            }
         }
 
+    },
+
+    async mounted() {
+        this.read_only = this.userPreferences.read_only;
     },
     computed: {
         userPreferences() {
@@ -87,7 +83,8 @@ var app = Vue.createApp({
                 return JSON.parse(localStorage.userPreferences);
             }
             else {
-                return {read_only: false, server: ""};
+                localStorage.userPreferences = JSON.stringify({read_only: false, server: "", last_refresh: new Date()});
+                return localStorage.userPreferences;
             }
         }
     },
@@ -97,11 +94,45 @@ var app = Vue.createApp({
             localStorage.my_followed = newFollowed;
         },
         read_only(newValue) {
-            localStorage.userPreferences = JSON.stringify({read_only: newValue, server: this.server});
+            this.userPreferences.read_only = newValue;
         }
     },
 
     methods: {
+        async refresh(userId, forceRefresh = false) {
+            console.log('refresh', userId);
+            this.loading_followed = true;
+            this.loading_endorsements = true;
+
+            this.my_account = await this.get_account(userId);
+
+            const [followed, account, endorsements] = await Promise.all([
+                this.get_followed(userId, forceRefresh, this.read_only).then((data) => { this.loading_followed = false; return data; }), 
+                this.get_account(userId, forceRefresh),
+                this.get_account_endorsements(forceRefresh).then((data) => { this.loading_endorsements = false; return data; }),
+            ]);
+
+            this.my_account = account;
+            this.my_endorsements = endorsements;
+
+            // Remove the accounts that are already endorsed
+            endorsements.forEach((item, index) => {
+                const foundItem = followed.find(item => item.acct == endorsements[index].acct);
+                if (foundItem) {
+                    followed.splice(followed.indexOf(foundItem), 1);
+                }
+            });
+
+            this.my_followed = followed;
+            
+            // Set last refresh date.
+            localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: this.server, last_refresh: new Date()});
+
+            console.log('my_account', this.my_account);
+            console.log('my_endorsements', this.my_endorsements);
+            console.log('my_followed', this.my_followed);
+
+        },
         logout() {
             this.mastodon.logout();
             localStorage.clear();
@@ -146,8 +177,8 @@ var app = Vue.createApp({
             }
         },
 
-        async get_account(userId) {
-            if (localStorage.my_account && localStorage.my_account.length > 0) {
+        async get_account(userId, forceRefresh = false) {
+            if (forceRefresh == false && localStorage.my_account && localStorage.my_account.length > 0) {
                 return JSON.parse(localStorage.my_account);
             }
             else {
@@ -170,9 +201,8 @@ var app = Vue.createApp({
                 data = JSON.parse(localStorage.my_endorsements);
             }
             else {
-                this.$root.loading_endorsements = true;
 
-                const response = await this.mastodon.get('/api/v1/endorsements?limit=4');
+                const response = await this.mastodon.get(`/api/v1/endorsements?limit=${this.max_retrieval_count}`);
                 var data = [];
                 if (!response.ok) {
                     alert('error getting account endorsements');
@@ -187,21 +217,19 @@ var app = Vue.createApp({
                             const newData = await response.json();
                             data.push(...newData);
                             next = this.parse_link_header(response.headers.get('link'));
-                            this.$root.total_endorsements_loaded = data.length;
+                            this.total_endorsements_loaded = data.length;
                         }
                     }
                 }
             }
 
-
             console.log('get account endorsements: ', data);
 
-            this.$root.loading_endorsements = false;
             this.loading_endorsements = false;
 
-            this.$root.total_endorsements_loaded = data.length;
+            this.total_endorsements_loaded = data.length;
 
-            this.$root.my_endorsements = data;
+            this.my_endorsements = data;
             
             localStorage.my_endorsements = JSON.stringify(data);
 
@@ -209,63 +237,43 @@ var app = Vue.createApp({
 
         },
 
-        async get_followers(userId, forceRefresh = false) {
-            if (forceRefresh == false && localStorage.my_followers && localStorage.my_followers.length > 0) {
-                data = localStorage.my_followers;
-            }
-            else {
-                const response = await this.mastodon.get(`/api/v1/accounts/${userId}/followers`);
-                if (!response.ok) {
-                    alert('error getting account following');
-                }
-                const data = await response.json();
-            }
+        async get_followed(userId, forceRefresh = false, readOnly = true) {
+            var data = [];
 
-            return data;
-        },
-
-        async get_followed(userId, forceRefresh = false) {
-
-            if (forceRefresh == false && localStorage.my_followed && localStorage.my_followed.length > 0) {
-                data = JSON.parse(localStorage.my_followed);
-            }
-            else {
-                this.$root.loading_followed = true;
-
-                const response = await this.mastodon.get(`/api/v1/accounts/${userId}/following?limit=80`);
-                var data = [];
-                if (!response.ok) {
-                    alert('error getting followed accounts');
+            if (readOnly == false) {
+                if (forceRefresh == false && localStorage.my_followed && localStorage.my_followed.length > 0) {
+                    data = JSON.parse(localStorage.my_followed);
                 }
                 else {
-                    data = await response.json();
+                    this.$root.loading_followed = true;
     
-                    this.$root.total_followed_loaded = data.length;
+                    const response = await this.mastodon.get(`/api/v1/accounts/${userId}/following?limit=${this.max_retrieval_count}`);
 
-                    if (this.parse_link_header(response.headers.get('link'))) {
-                        let next = this.parse_link_header(response.headers.get('link'));
-                        while (next) {
-                            const response = await this.mastodon.get(next);
-                            const newData = await response.json();
-                            data.push(...newData);
-                            next = this.parse_link_header(response.headers.get('link'));
-                            this.$root.total_followed_loaded = data.length;
-                            console.log('next', next);
-                        }
+                    if (!response.ok) {
+                        alert('error getting followed accounts');
                     }
+                    else {
+                        data = await response.json();
+        
+                        this.$root.total_followed_loaded = data.length;
     
-                    // Remove the accounts that are already endorsed
-                    var endorsements = await this.get_account_endorsements();
-                    if (endorsements && endorsements.length == 0) {
-                        endorsements = await this.get_account_endorsements();
-                    }
-                    const endorsements_ids = endorsements.map(item => item.id);
-                    data.forEach((item, index) => {
-                        if (endorsements_ids.includes(item.id)) {
-                            data.splice(index, 1);
+                        if (this.parse_link_header(response.headers.get('link'))) {
+                            let next = this.parse_link_header(response.headers.get('link'));
+                            while (next) {
+                                const response = await this.mastodon.get(next);
+                                const newData = await response.json();
+                                data.push(...newData);
+                                next = this.parse_link_header(response.headers.get('link'));
+                                this.$root.total_followed_loaded = data.length;
+    
+                                console.log('currentLength', data.length);
+                                console.log('next', next);
+                            }
                         }
-                    });
     
+                        this.$root.total_followed_loaded = data.length;
+        
+                    }
                 }
             }
 
@@ -342,7 +350,7 @@ var app = Vue.createApp({
 
                 if (this.read_only) {
                     this.mastodon = await Mastodon.initialize({
-                        app_name: 'Featured Profiles Lab (Read+Write)',
+                        app_name: 'Featured Profiles Lab',
                         app_url: 'https://featured-profiles.netlify.app/',
                         // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
                         scopes: 'read:accounts read:follows',
@@ -350,7 +358,7 @@ var app = Vue.createApp({
             
                 }
 
-                localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: server});
+                localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: server, last_refresh: new Date()});
                 
                 //this.options.scopes = this.computedAuthorizedScope;
 
@@ -388,6 +396,10 @@ app.component('endorsements', {
             type: Boolean,
             required: true
         },
+        global_refresh: {
+            type: Boolean,
+            required: true
+        },
     },
     data() {
         return {
@@ -399,12 +411,12 @@ app.component('endorsements', {
             let tempEndorsements = [];
 
             if (this.searchValue && this.searchValue.length >= 1) {
-                tempEndorsements = this.$root.my_endorsements.filter((item) => {
+                tempEndorsements = this.endorsements.filter((item) => {
                     return item.display_name.toLowerCase().includes(this.searchValue.toLowerCase()) || item.acct.toLowerCase().includes(this.searchValue.toLowerCase());
                 });
             }
             else {
-                tempEndorsements = this.$root.my_endorsements.slice(0, (this.$root.my_endorsements.length > 6 ? 6 : this.$root.my_endorsements.length));
+                tempEndorsements = this.endorsements.slice(0, (this.endorsements.length > this.$root.max_displayed_endorsements ? this.$root.max_displayed_endorsements : this.endorsements.length));
             }
 
             console.log('tempEndorsements', tempEndorsements);
@@ -433,20 +445,11 @@ app.component('endorsements', {
                         this.$root.my_followed.unshift(this.endorsements[index]);
                     }
                     // remove the indexed item from this.endorsements
-                    this.$root.my_endorsements.splice(index, 1);
+//                    this.$root.my_endorsements.splice(index, 1);
                     this.endorsements.splice(index, 1);
-                    localStorage.my_endorsements = JSON.stringify(this.$root.my_endorsements);
+                    localStorage.my_endorsements = JSON.stringify(this.endorsements);
                 }
             })
-        },
-        refresh() {
-            this.loading_endorsements = true;
-            console.log('local', this.loading_endorsements);
-            this.$root.total_endorsements_loaded = 0;
-            this.$root.get_account_endorsements(this.$root.user_id, true).then((response) => {
-                this.endorsements = this.$root.my_endorsements;
-            });
-            this.loading_endorsements = false;
         },
     },
 
@@ -472,6 +475,10 @@ app.component('followed', {
             type: Boolean,
             required: true
         },
+        global_refresh: {
+            type: Boolean,
+            required: true
+        },
     },
     watch: {
         total_followed_loaded(newCount) {
@@ -486,7 +493,7 @@ app.component('followed', {
             let tempFollowed = [];
 
             if (this.searchValue && this.searchValue.length >= 1) {
-                tempFollowed = this.$root.my_followed.filter((item) => {
+                tempFollowed = this.followed.filter((item) => {
                     return item.display_name.toLowerCase().includes(this.searchValue.toLowerCase()) || item.acct.toLowerCase().includes(this.searchValue.toLowerCase());
                 });
             }
@@ -495,35 +502,22 @@ app.component('followed', {
 
             return tempFollowed;
         },
-        followedCount() {
-            this
-        }
     },
     methods: {
         pin(id) {
             console.log('pin', id );
             const index = this.followed.findIndex(item => item.id === id);
             // add the item to the followed list
-            this.$root.set_account_endorsement(this.$root.my_followed[index].id).then((response) => {
+            this.$root.set_account_endorsement(this.followed[index].id).then((response) => {
                 if (response !== null) {
                     // Add the item to the top of the endorsements list
-                    this.$root.my_endorsements.unshift(this.$root.my_followed[index]);
+                    this.$root.my_endorsements.unshift(this.followed[index]);
                     localStorage.my_endorsements = JSON.stringify(this.$root.my_endorsements);
                     // remove the indexed item from this.followed
-                    this.$root.my_followed.splice(index, 1);
                     this.followed.splice(index, 1);
-                    localStorage.my_followed = JSON.stringify(this.$root.my_followed);
+                    localStorage.my_followed = JSON.stringify(this.followed);
                 }
             })
-        },
-        refresh() {
-            this.loading_followed = true;
-            console.log('local', this.loading_followed);
-            this.$root.total_followed_loaded = 0;
-            this.$root.get_followed(this.$root.user_id, true).then((response) => {
-                this.followed = this.$root.my_followed;
-            });
-            this.loading_followed = false;
         },
     }
 }),

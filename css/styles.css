@@ -54,13 +54,101 @@ body > * {
     flex-shrink: 0;
 }
 
+.root {
+    max-width:950px;
+    min-width:690px;
+}
+
+form {
+    margin-bottom:50px;
+}
+
+.btn-login {
+    width:150px;    
+}
+
+.account article {
+  text-align:center;
+}
+
+.account header {
+    padding:0px;
+}
+
+
+.profile header {
+    padding:0px;
+}
+
+header .banner {
+    border-radius:0.5em;
+    height:250px;
+    background-size:100%;
+}
+
+.profile-note {
+    margin-top:10px;
+}
+
+.profile-account-info {
+    position: relative; 
+    background-color: rgba(0, 0, 0, 0.8); 
+    padding: 15px;
+    padding-bottom: 5px; 
+    border-radius: 0.5em;    
+    top:75px;
+    width:95%; 
+    margin:0 auto;
+}
+
+.account-display-name {
+ font-size:larger;
+}
+
+button .unpin::before {
+    margin-top:10px;
+    text-align:center;
+}
+
+.avatar {
+   width:100px;
+   height:100px;
+  opacity:100%;
+}
+
+button .refresh {
+    top:10px;
+}
+
+#refresh {
+    position:relative;
+    text-align: right;
+    padding-right:10px;
+}
+
+#refresh button {
+    position:relative;
+    top: 60px;
+}
+
+.highlight {
+    background-color: rgba(0, 0, 0, 0.85); 
+    padding: 15px; 
+    border-radius: 0.5em;
+}
+
 .endorsed-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: stretch;
     column-gap: 30px;
+    margin-bottom:10px;
 
+}
+
+.endorsed-summary {
+    margin-bottom: 20px;
 }
 
 .endorsed-container article {
@@ -78,58 +166,33 @@ body > * {
 }
 
 .account-info {
+    text-align:center;
     margin:-8px;
 }
 
-.low-opacity {
-    position: relative;
-    isolation: isolate;
+.endorsed-action {
+    margin-top:15px;
 }
 
-.low-opacity::after {
-    content: '';
-    position:absolute;
-    z-index: -1;
-    inset: 0;
-    opacity: 0.2;
-}
-
-.endorsed-container article {
-    flex-grow: 1;
-}
-
-.account-container {
-    font-size:smaller; 
-    line-height:1.2;
-    overflow-wrap: break-word;
-
-}
-
-.avatar-container {
-    display:inline-flex;
-    justify-content:center;
-    align-items: center;
-}
 
 .account-placeholder {
+    visibility: hidden;
     width: 200px;
     height: 2px;
     margin: 5px;
+    margin-bottom: -80px;
     
     flex-basis: 200px;
     flex-grow: 1;
   }
 
-.account-summary {
-    display:flex;
-}
+
 
 img.avatar {
     border-radius: 50%;
     margin-right:10px;
-    margin-botton:10px;
+    margin-bottom:10px;
 }
-
 
 .followed-container {
     display:flex; 
@@ -198,29 +261,6 @@ img.avatar {
     visibility: hidden;
  }
 
-summary {
-    padding-top: 10px;
-    padding-bottom:10px;
-    margin-bottom: 10px;
-}
-
-
-.api_docs_container {
-    display: flex;
-    whitespace: nowrap;
-    flex-wrap: wrap;
-}
-
-.api_docs {
-    margin-bottom: 10px !important;
-    padding-right: 20px !important;
-    white-space: nowrap;
-
-}
-
-.api_docs a {
-    text-decoration: none;
-}
 
 .border-shadow {
     border-radius:.50em;
@@ -228,9 +268,40 @@ summary {
     box-shadow: 0px 0px 19px #9236A4;
   }
 
-  .endorsed .account-info {
+  .endorsed {
+    border-radius:.5em;
+    background-color:#858AFA;
+  }
+
+.endorsed .account-info {
     background-color: rgba(0, 0, 0, 0.85); 
     padding: 15px; 
     border-radius: 0.5em;
-    
+}
+
+.endorsed .avatar {
+    opacity:100%;
+    margin-bottom:10px;
+    width: 50px;
+    height:50px;
+}
+
+.read-only-scope {
+    margin-bottom:15px; 
+    margin-top:10px; 
+    padding:5px; 
+}
+
+.active {
+    margin-bottom:15px; 
+    margin-top:10px; 
+    background-color:#2F0C7A;
+    border: solid 1px #7540bf;
+    border-radius:10px;
+}
+
+.page-footer {
+    text-align:center; 
+    margin-top:50px;
+    margin-bottom:50px;
 }
