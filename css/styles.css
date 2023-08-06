@@ -165,10 +165,6 @@ button .refresh {
     margin-bottom:2px;
 }
 
-.account-info {
-    text-align:center;
-    margin:-8px;
-}
 
 .endorsed-action {
     margin-top:15px;
@@ -273,10 +269,14 @@ img.avatar {
   }
 
 .endorsed .account-info {
-    background-color: rgba(0, 0, 0, 0.85); 
+    text-align:center;
+    margin:-8px;
+    background-color: rgba(0, 0, 0, 0.95); 
     padding: 15px; 
     border-radius: 0.5em;
+    opacity: 1;
 }
+
 
 .endorsed .avatar {
     opacity:100%;
@@ -304,3 +304,6 @@ img.avatar {
     margin-top:50px;
     margin-bottom:50px;
 }
+
+
+

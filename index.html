@@ -33,7 +33,7 @@
           <div v-if="mastodon && !mastodon.loggedIn()">
             <hgroup>
               <h1>Mastodon Featured Profiles</h1>
-              <p>A streamlined management tool for Mastodon featured profiles.</p>
+              <p>A streamlined tool for easier management of your featured profiles.</p>
             </hgroup>
 
 
@@ -116,31 +116,40 @@
           Found {{ filteredEndorsements.length }} accounts that match.</p>
         </div>
       </div>
-      <div class="endorsed-container gird">
-        <div v-if="this.endorsements.length == 0">
-          <hgroup v-if="this.read_only == false">
-            <h4>You have no featured profiles.</h4>
-            <p>Search your followed accounts for a profile to feature.</p>
-          </hgroup>
-          <div v-else>
-            <h5>Want to set your featured profiles with this app?</h5>
-            <p>Log out and leave the "Authorize read-only access" toggle turned off, then log back in.</p>
-            <hr/>
-            <h5>Want to feature a profile without giving this application access? </h5>
-            <p>Browse your followed profiles on your official Mastodon instance website.</p>
-            <p>In the more options menu of a followed account, choose "Feature on profile"</p>
-            <p>Refresh this application.</p>
+      <div v-if="this.endorsements.length == 0">
+        <hgroup>
+          <h4>You have no profiles currently selected.</h4>
+          <div v-if="this.$root.userPreferences.read_only == true" class="highlight">
+            <p>You can't manage featured profiles from this app with your current read only permissions.</p>
+            <span>Set your featured profiles <a :href="`${this.$root.my_account.url}/following`" target="_blank" ref="noopener">from your own instance</a>, then refresh this page to view them.</span>
+            <button @click="this.$root.refresh(this.$root.user_id, true)">Refresh</button>
+            <button @click="this.$root.logout()">Logout</button>
           </div>
-
-        </div>
+          <p v-else>Search your followed accounts for profiles to feature.</p>
+        </hgroup>
+      </div>
+      <div v-else>
+        <hgroup>
+          <h4>You have {{ this.$root.my_endorsements.length }} featured profile<span v-if="this.$root.my_endorsements.length > 1">s</span>.</h4>
+          <div v-if="this.$root.userPreferences.read_only == true" class="highlight">
+            <p>You can't manage featured profiles from this app with your current read only permissions.</p>
+            <span>Set your featured profiles <a :href="`${this.$root.my_account.url}/following`" target="_blank" ref="noopener">from your own instance</a>, then refresh this page to view them.</span>
+            <button @click="this.$root.refresh(this.$root.user_id, true)">Refresh</button>
+            <button @click="this.$root.logout()">Logout</button>
+          </div>
+          <p v-else>Search your followed accounts for a profile to feature.</p>
+        </hgroup>
+      </div>
+    </div>
+    <div class="endorsed-container">
         <article class="endorsed item"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
           <div class="account-info">
-            <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name"/>
+            <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name" loading="lazy" />
             <div>
               <p v-if="endorsement.display_name" class="account-display-name">{{ endorsement.display_name }}</p>
               <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
             </div>
-            <div class="endorsed-action" v-if="this.$root.read_only == false">
+            <div class="endorsed-action" v-if="this.$root.userPreferences.read_only == false">
               <button class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
             </div>
           </div>

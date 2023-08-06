@@ -27,8 +27,22 @@ var app = Vue.createApp({
     computed: {
         computedAuthorizedScope() {
             console.log("read only value", this.userPreferences.read_only);
-            return this.userPreferences.read_only ? "read:accounts read:follows" : "read:accounts write:accounts read:follows";
+            if (this.userPreferences && this.userPreferences.read_only != null && this.userPreferences.read_only == false) {
+                return "read:accounts write:accounts read:follows";
+            }
+            else {
+                return "read:accounts read:follows";
+            }
         },
+        userPreferences() {
+            if (localStorage.userPreferences) {
+                return JSON.parse(localStorage.userPreferences);
+            }
+            else {
+                localStorage.userPreferences = JSON.stringify({read_only: this.read_only, server: "", last_refresh: new Date()});
+                return localStorage.userPreferences;
+            }
+        }
     },
 
     async created() {
@@ -37,7 +51,7 @@ var app = Vue.createApp({
             app_url: 'https://featured-profiles.netlify.app/',
             // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
 
-            scopes: (this.read_only ? 'read:accounts read:follows': 'read:accounts write:accounts read:follows'),
+            scopes: (this.userPreferences.read_only ? 'read:accounts read:follows': 'read:accounts write:accounts read:follows'),
         });
 
         if (!this.mastodon.loggedIn()) {
@@ -71,24 +85,13 @@ var app = Vue.createApp({
 
     },
 
-    computed: {
-        userPreferences() {
-            if (localStorage.userPreferences) {
-                return JSON.parse(localStorage.userPreferences);
-            }
-            else {
-                localStorage.userPreferences = JSON.stringify({read_only: false, server: "", last_refresh: new Date()});
-                return localStorage.userPreferences;
-            }
-        }
-    },
-
     watch: {
-        name(newFollowed) {
-            localStorage.my_followed = newFollowed;
-        },
         read_only(newValue) {
-            localStorage.userPreferences = JSON.stringify({read_only: newValue, server: localStorage.server, last_refresh: localStorage.last_refresh});
+            if (localStorage.userPreferences) {
+                var userPreferences = JSON.parse(localStorage.userPreferences);
+                userPreferences.read_only = newValue;
+                localStorage.userPreferences = JSON.stringify(userPreferences);
+            }
         }
     },
 
@@ -120,7 +123,7 @@ var app = Vue.createApp({
             this.my_followed = followed;
             
             // Set last refresh date.
-            localStorage.userPreferences = JSON.stringify({read_only: this.userPreferences.read_only, server: this.server, last_refresh: new Date()});
+            localStorage.userPreferences = JSON.stringify({read_only: this.userPreferences.read_only == null ? false : this.userPreferences.read_only, server: this.userPreferences.server, last_refresh: new Date()});
 
             console.log('my_account', this.my_account);
             console.log('my_endorsements', this.my_endorsements);
@@ -250,7 +253,7 @@ var app = Vue.createApp({
                         data = await response.json();
         
                         this.$root.total_followed_loaded = data.length;
-    
+
                         if (this.parse_link_header(response.headers.get('link'))) {
                             let next = this.parse_link_header(response.headers.get('link'));
                             while (next) {
@@ -271,6 +274,10 @@ var app = Vue.createApp({
                 }
             }
 
+            const partialData = data.map(({ id, acct, display_name, avatar, bot, url, header }) => ({ id, acct, display_name, avatar, bot, url, header }));
+
+            data = partialData;
+    
             this.$root.loading_followed = false;
             this.$root.total_followed_loaded = data.length;
             localStorage.my_followed = JSON.stringify(data);
@@ -432,6 +439,7 @@ app.component('endorsements', {
     methods: {
         unpin(id) {
             const index = this.endorsements.findIndex(item => item.id === id);
+
             this.$root.remove_account_endorsement(this.endorsements[index].id).then((response) => {
                 if (response !== null) {
                     // add the item to the followed list
