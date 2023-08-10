@@ -142,12 +142,15 @@
       </div>
     </div>
     <div class="endorsed-container">
-        <article class="endorsed item"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
+       <article class="endorsed item"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
           <div class="account-info">
             <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name" loading="lazy" />
             <div>
               <p v-if="endorsement.display_name" class="account-display-name">{{ endorsement.display_name }}</p>
-              <p><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a></p>
+              <p>
+                <span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
+                <span v-if="endorsement.group" alt="Group Account">👥 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
+              </p>
             </div>
             <div class="endorsed-action" v-if="this.$root.userPreferences.read_only == false">
               <button class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
