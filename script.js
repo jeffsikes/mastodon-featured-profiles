@@ -619,7 +619,12 @@ app.component("account", {
             .search_accounts(this.manualSearchValue, true)
             .then((finalResult) => {
               finalResult.forEach((item) => {
-                tempManualFollowed.push(item);
+                let accountEndorsed = this.$root.my_endorsements.some(
+                  (el) => el.id === item.id
+                );
+                if (!accountEndorsed) {
+                  tempManualFollowed.push(item);
+                }
               });
             })
             .then(() => {
@@ -638,7 +643,10 @@ app.component("account", {
       },
       pin(id) {
         console.log("pin", id);
-        const index = this.followed.findIndex((item) => item.id === id);
+        const index = this.filteredManualFollowed.findIndex(
+          (item) => item.id === id
+        );
+        //const index = this.followed.findIndex((item) => item.id === id);
         // add the item to the followed list
         this.$root
           .set_account_endorsement(this.followed[index].id)
@@ -650,7 +658,8 @@ app.component("account", {
                 this.$root.my_endorsements
               );
               // remove the indexed item from this.followed
-              this.followed.splice(index, 1);
+              this.filteredManualFollowed.splice(index, 1);
+              //              this.followed.splice(index, 1);
               localStorage.my_followed = JSON.stringify(this.followed);
             }
           });
