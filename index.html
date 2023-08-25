@@ -197,8 +197,7 @@
             <div>
               <p v-if="endorsement.display_name" class="account-display-name">{{ endorsement.display_name }}</p>
               <p>
-                <span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
-                <span v-if="endorsement.group" alt="Group Account">👥 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
+                <span v-if="endorsement.group" alt="Group Account">👥 </span><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a :href="endorsement.url" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
               </p>
             </div>
             <div class="endorsed-action" v-if="this.$root.userPreferences.read_only == false">
@@ -226,17 +225,6 @@
       </div>
       <div class="followed-container" id="followed">
         <article class="followed-account followed-item border-shadow" v-for="account in this.filteredManualFollowed" :key="account.id" :id="account.id" >
-          <img :src="account.avatar" :alt="account.display_name" loading="lazy" />
-          <div><span v-if="account.bot" alt="Automated Account">🤖 </span><span>{{ account.display_name }}</span></div>
-          <div>
-            <a :href="account.url" target="_blank" rel="noopener">{{ account.acct }}</a>
-          </div>
-          <footer>
-        <div  class="pin"><button v-on:click="pin(account.id)">Feature</button></div>
-          </footer>
-      </article>
-
-      <article class="followed-account followed-item border-shadow" v-for="account in filteredFollowed" :key="account.id" :id="account.id" >
           <img :src="account.avatar" :alt="account.display_name" loading="lazy" />
           <div><span v-if="account.bot" alt="Automated Account">🤖 </span><span>{{ account.display_name }}</span></div>
           <div>

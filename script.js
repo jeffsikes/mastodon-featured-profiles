@@ -537,16 +537,12 @@ app.component("account", {
           .remove_account_endorsement(this.endorsements[index].id)
           .then((response) => {
             if (response !== null) {
-              // add the item to the followed list
-              if (
-                this.$root.my_followed.findIndex((item) => item.id === id) == -1
-              ) {
-                this.$root.my_followed.unshift(this.endorsements[index]);
-              }
               // remove the indexed item from this.endorsements
               //                    this.$root.my_endorsements.splice(index, 1);
               this.endorsements.splice(index, 1);
               localStorage.my_endorsements = JSON.stringify(this.endorsements);
+
+              this.$root.search_accounts(this.manualSearchValue, true);
             }
           });
       },
@@ -648,21 +644,21 @@ app.component("account", {
         );
         //const index = this.followed.findIndex((item) => item.id === id);
         // add the item to the followed list
-        this.$root
-          .set_account_endorsement(this.followed[index].id)
-          .then((response) => {
-            if (response !== null) {
-              // Add the item to the top of the endorsements list
-              this.$root.my_endorsements.unshift(this.followed[index]);
-              localStorage.my_endorsements = JSON.stringify(
-                this.$root.my_endorsements
-              );
-              // remove the indexed item from this.followed
-              this.filteredManualFollowed.splice(index, 1);
-              //              this.followed.splice(index, 1);
-              localStorage.my_followed = JSON.stringify(this.followed);
-            }
-          });
+        this.$root.set_account_endorsement(id).then((response) => {
+          if (response !== null) {
+            // Add the item to the top of the endorsements list
+            this.$root.my_endorsements.unshift(
+              this.filteredManualFollowed[index]
+            );
+            localStorage.my_endorsements = JSON.stringify(
+              this.$root.my_endorsements
+            );
+            // remove the indexed item from this.followed
+            this.filteredManualFollowed.splice(index, 1);
+            //              this.followed.splice(index, 1);
+            localStorage.my_followed = JSON.stringify(this.followed);
+          }
+        });
       },
     },
   }),
