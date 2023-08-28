@@ -191,7 +191,7 @@
       </div>
     </div>
     <div class="endorsed-container">
-       <article class="endorsed item"  v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
+       <article class="endorsed item" v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
           <div class="account-info">
             <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name" loading="lazy" />
             <div>
@@ -218,13 +218,13 @@
       <p>Loading {{ this.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
     </div>
     <div v-else>
-      <!-- <input id="search-input" type="search" v-model="searchValue" placeholder="Search for a profile to feature" /> -->
-      <input id="manual-search-input" type="search" v-model="manualSearchValue" @keyup="getFollowedAccounts" placeholder="Search for a profile to feature"/>
+      <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" placeholder="Search 1 for a profile to feature" />
+      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" placeholder="Search 2 for a profile to feature"/>
       <div class="followed-summary">
-        <p>Showing {{ filteredManualFollowed.length }} of {{ this.followed.length  }} followed profiles</p>
+        <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles</p>
       </div>
       <div class="followed-container" id="followed">
-        <article class="followed-account followed-item border-shadow" v-for="account in this.filteredManualFollowed" :key="account.id" :id="account.id" >
+        <article class="followed-account followed-item border-shadow" v-for="account in this.filteredFollowed" :key="account.id" :id="account.id" >
           <img :src="account.avatar" :alt="account.display_name" loading="lazy" />
           <div><span v-if="account.bot" alt="Automated Account">🤖 </span><span>{{ account.display_name }}</span></div>
           <div>
