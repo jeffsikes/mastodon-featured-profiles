@@ -323,7 +323,7 @@ var app = Vue.createApp({
         }
 
         const partialData = data.map(
-          ({ id, acct, display_name, avatar, bot, url, header }) => ({
+          ({ id, acct, display_name, avatar, bot, url, header, emojis }) => ({
             id,
             acct,
             display_name,
@@ -331,6 +331,7 @@ var app = Vue.createApp({
             bot,
             url,
             header,
+            emojis,
           })
         );
 
@@ -459,6 +460,23 @@ var app = Vue.createApp({
       }
 
       return null;
+    },
+
+    parse_emojis(text, emojis = []) {
+      if (!text) return "";
+      if (!emojis.length) return text;
+      if (text.indexOf(":") === -1) return text;
+      // Replace shortcodes in text with emoji
+      // emojis = [{ shortcode: 'smile', url: 'https://example.com/emoji.png' }]
+      emojis.forEach((emoji) => {
+        const { shortcode, staticUrl, url } = emoji;
+        text = text.replace(
+          new RegExp(`:${shortcode}:`, "g"),
+          `<img style="margin-left:5px;" class="shortcode-emoji emoji" src="${url}" alt=":${shortcode}:" width="16" height="16" loading="lazy" decoding="async" />`
+        );
+      });
+      // console.log(text, emojis);
+      return text;
     },
 
     parse_link_header(link) {
