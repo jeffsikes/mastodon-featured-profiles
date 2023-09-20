@@ -206,7 +206,7 @@
               </p>
             </div>
             <div class="endorsed-action">
-              <button v-if="this.$root.userPreferences.read_only == false" class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
+              <button v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only == false" class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
               <a v-else  target="_followed" role="button" class="secondary unpin" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</a>
             </div>
           </div>
@@ -238,7 +238,7 @@
           </div>
           <footer>
         <div  class="pin">
-          <button v-if="this.$root.userPreferences.read_only == false" v-on:click="pin(account.id)">Feature</button>
+          <button v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only == false" v-on:click="pin(account.id)">Feature</button>
           <a v-else  target="_followed" role="button" :href="'https://' + this.$root.userPreferences.server + '/@' + account.acct" :aria-label="`Feature profile for ${ account.acct }`">Feature</a>
           </div>
           </footer>
