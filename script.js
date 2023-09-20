@@ -329,12 +329,14 @@ var app = Vue.createApp({
         }
 
         const partialData = data.map(
-          ({ id, acct, display_name, avatar, bot, url, header, emojis }) => ({
+          ({ id, acct, display_name, avatar, bot, group, memorial, url, header, emojis }) => ({
             id,
             acct,
             display_name,
             avatar,
             bot,
+            group,
+            memorial,
             url,
             header,
             emojis,

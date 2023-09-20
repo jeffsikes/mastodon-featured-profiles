@@ -29,7 +29,7 @@
               </ul>
             </nav>
           </header>
-          <dialog v-if="this.$root.userPreferences.read_only === true && this.$root.read_only_modal_displayed != true" id="readOnlyModal" open>
+          <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true" id="readOnlyModal" open>
             <article>
               <h2>You are logged in with read only access</h2>
               <p>
@@ -153,8 +153,10 @@
               </div>
                 <span v-if="profile.display_name" class="account-display-name">{{ profile.display_name }}</span><br/>
                 <a :href="profile.url" target="_blank" rel="me noopener">
-                  <span v-if="profile.bot" alt="Bot Account">🤖 </span>@{{profile.acct }}<br/>
-                </a>
+                  <span v-if="profile.bot" alt="Bot Account">🤖 </span>@{{profile.acct }}
+                  <span v-if="profile.group" alt="Group Account">👥 </span>
+                  <span v-if="profile.memorial" alt="Memorial Account">🌸 </span>@{{profile.acct }}
+                </a><br/>
               <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span><span class="account-followers" v-else>0 Followers</span>,
               <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span><span v-else class="account-following">0 Following</span>
               <div class="profile-note">
@@ -202,12 +204,15 @@
             <div style="text-align:center;">
               <div v-if="endorsement.display_name" class="account-display-name" style="display:flex; align-items:center; justify-content:center;" v-html="this.$root.parse_emojis(endorsement.display_name, endorsement.emojis)"></div>
               <p>
-                <span v-if="endorsement.group" alt="Group Account">👥 </span><span v-if="endorsement.bot" alt="Bot Account">🤖 </span><a target="_followed" v-if="this.$root.userPreferences.read_only == true" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
+                <span v-if="endorsement.group" alt="Group Account">👥 </span>
+                <span v-if="endorsement.bot" alt="Bot Account">🤖 </span>
+                <span v-if="endorsement.memorial" alt="Memorial Account">🌸 </span>
+                <a target="_followed" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" target="_blank" rel="me noopener">@{{ endorsement.acct }}</a>
               </p>
             </div>
             <div class="endorsed-action">
-              <button v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only == false" class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
-              <a v-else  target="_followed" role="button" class="secondary unpin" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</a>
+              <a v-if="this.$root.userPreferences.read_only == true" target="_followed" role="button" class="secondary unpin" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</a>
+              <button v-else class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
             </div>
           </div>
         </article>
@@ -232,14 +237,18 @@
       <div class="followed-container" id="followed">
         <article class="followed-account followed-item border-shadow" v-for="account in this.filteredFollowed" :key="account.id" :id="account.id" >
           <img :src="account.avatar" :alt="account.display_name" loading="lazy" />
-          <div><span v-if="account.bot" alt="Automated Account">🤖 </span><span>{{ account.display_name }}</span></div>
+          <div><span v-if="account.bot" alt="Automated Account">🤖 </span>
+            <span v-if="account.group" alt="Group Account">👥 </span>
+            <span v-if="account.memorial" alt="Memorial Account">🌸 </span>
+            <span>{{ account.display_name }}</span>
+          </div>
           <div>
-            <a :href="account.url" target="_blank" rel="noopener">{{ account.acct }}</a>
+            <a :href="account.url" target="_followed" rel="noopener">{{ account.acct }}</a>
           </div>
           <footer>
         <div  class="pin">
-          <button v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only == false" v-on:click="pin(account.id)">Feature</button>
-          <a v-else  target="_followed" role="button" :href="'https://' + this.$root.userPreferences.server + '/@' + account.acct" :aria-label="`Feature profile for ${ account.acct }`">Feature</a>
+          <a v-if="this.$root.userPreferences.read_only == true"  target="_followed" role="button" :href="'https://' + this.$root.userPreferences.server + '/@' + account.acct" :aria-label="`Feature profile for ${ account.acct }`">Feature</a>
+          <button v-else  v-on:click="pin(account.id)">Feature</button>
           </div>
           </footer>
       </article>
