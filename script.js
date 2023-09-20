@@ -18,9 +18,9 @@ var app = Vue.createApp({
       total_followed_loaded: 0,
       total_endorsements_loaded: 0,
       max_retrieval_count: 80,
-      max_displayed_endorsements: 15,
+      max_displayed_endorsements: 27,
       refresh_interval: 120, // minutes
-      followed_threshold: 400,
+      followed_threshold: 300,
       followed_search: "",
     };
   },
@@ -279,7 +279,7 @@ var app = Vue.createApp({
         this.$root.my_account.following_count > 0
       ) {
         console.log("Reached 01");
-        if (readOnly == false) {
+        if (readOnly == false || readOnly == true) {
           console.log("Reached 02");
           if (
             forceRefresh == false &&
