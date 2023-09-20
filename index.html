@@ -29,6 +29,23 @@
               </ul>
             </nav>
           </header>
+          <dialog v-if="this.$root.userPreferences.read_only === true && this.$root.read_only_modal_displayed != true" id="readOnlyModal" open>
+            <article>
+              <h2>You are logged in with read only access</h2>
+              <p>
+                To add or remove featured profiles, you'll need to do so directly on your Mastodon instance.
+              </p>
+              <p>
+                From a profile page, select the action from the secondary menu, then refresh this page to see the update. 
+              </p>
+
+              <img src="/images/profile_example.png" alt="Profile Example" style="width:100%; max-width:300px; margin: 0 auto; display:block;"/>
+
+              <footer>
+                <button @click="hideModal()" >Understood</button>
+              </footer>
+            </article>
+          </dialog>
           <div v-if="mastodon && !mastodon.loggedIn()">
             <hgroup>
               <h1>Mastodon Featured Profiles</h1>
@@ -207,8 +224,8 @@
       <p>Loading {{ this.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
     </div>
     <div v-else>
-      <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" placeholder="Search 1 for a profile to feature" />
-      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" placeholder="Search 2 for a profile to feature"/>
+      <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" placeholder="Search for a profile to feature" />
+      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" placeholder="Search for a profile to feature"/>
       <div class="followed-summary">
         <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles</p>
       </div>

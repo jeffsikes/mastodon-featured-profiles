@@ -20,7 +20,7 @@ var app = Vue.createApp({
       max_retrieval_count: 80,
       max_displayed_endorsements: 27,
       refresh_interval: 120, // minutes
-      followed_threshold: 300,
+      followed_threshold: 500,
       followed_search: "",
     };
   },
@@ -158,6 +158,12 @@ var app = Vue.createApp({
       localStorage.clear();
       window.location.hash = "";
       window.location.reload();
+    },
+
+    hideModal() {
+      var modal = document.getElementById("readOnlyModal");
+      modal.setAttribute("class", "modal-is-closing")
+      modal.removeAttribute("open");
     },
 
     async set_spinner(toggle) {
