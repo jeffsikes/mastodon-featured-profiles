@@ -56,12 +56,12 @@ body > * {
   max-width: 950px;
 }
 
-form {
-  margin-bottom: 50px;
+form {input {
+  font-size: 12px;
 }
 
-input {
-  font-size: 16px;
+
+  margin-bottom: 50px;
 }
 
 .btn-login {
