@@ -20,7 +20,7 @@ var app = Vue.createApp({
       max_retrieval_count: 80,
       max_displayed_endorsements: 27,
       refresh_interval: 120, // minutes
-      followed_threshold: 500,
+      followed_threshold: 400,
       followed_search: "",
     };
   },

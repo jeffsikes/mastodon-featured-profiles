@@ -60,6 +60,10 @@ form {
   margin-bottom: 50px;
 }
 
+input {
+  font-size: 19px;
+}
+
 .btn-login {
   width: 150px;
 }
@@ -193,8 +197,8 @@ img.avatar {
 }
 
 .followed-container article {
-  width: 150px;
-  flex-basis: 150px;
+  width: 200px;
+  flex-basis: 200px;
   flex-grow: 1;
 }
 
