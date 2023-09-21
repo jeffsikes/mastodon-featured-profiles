@@ -1,6 +1,10 @@
-# Mastodon Starter Kit - VueJS
+# Mastodon Featured Profiles
 
-This is a starter kit that provides you with the basics to start learning about Mastodon, the related API and data structures.
+Manage your featured profile selections in a centralized location.
+
+## What is it?
+
+Currently, this is a half-dead feature of Mastodon. Profiles can be marked as featured, but there's no way to view them. In their previous existence, a random set of your selections would appear on your public facing profile page for others to view, similar to how featured hashtags currently behave.
 
 ### No Server 
 
@@ -15,7 +19,7 @@ I wanted to learn about Mastodon - how to authenticate, how to pull data down, h
 
 It's not production ready. This is just a local development toy.
 
-It's MIT licensed so you can use it however you want.
+You can use it however you want.
 
 ### How to start
 
@@ -31,28 +35,28 @@ Then open http://localhost:8081 in your browser.
 The site contains a tiny Mastodon library called `mastodon.js` for logging in with
 OAuth and making requests. You can see some examples of how to use it in `script.js`.
 
-This code relies heavily on the work of b0rk, who created this miniscule Mastodon Library that authenticates requests and makes a few calls.
+This code relies heavily on the work of [Julia Evans](https://mastodon.social/@b0rk), who [created this miniscule Mastodon Library](https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library) that authenticates requests and makes a few calls.
 
 I built on this base and added more calls to retrieve various timelines, hashtags, lists, etc.
 
 ### Maintenance
-Right now this is just a hobby. I don't know if I will continue to fiddle with it. My plan is to create more of these in different languages. 
+Right now this is just a hobby. I don't know if I will continue to fiddle with it. 
 
 You are welcome to download, clone or fork this and make it your own. I'd love to hear what you're doing with it!
 
 ### PicoCss
+
+[PicoCss Version 2](https://v2.picocss.com/docs/v2) was used to fancy up this site. I love this tiny framework. It really gets out of your way to let you learn something new, while ensuring you have something that looks nice.
+
 It may be possible to use the classless version of PicoCss, but found that with the Vue SPA there were some difficulties with centering the body using the classless version.
 
 To make your own theme, Pico suggests updating and recompiling the SASS file, which I did not want to do because that adds additional complexities to the application.
-
-https://picocss.com/docs/customization.html
 
 Instead, I fell back to CSS variables, which are also offered as a suggestion and work well in this scenario.
 
 Here's the list of variables.
 
-https://github.com/picocss/pico/blob/master/css/themes/default.css
-
+* https://v2.picocss.com/docs/css-variables
 
 
 [Featured Profile Open Issue 9646](https://github.com/mastodon/mastodon/issues/9646#issuecomment-450443181)
@@ -62,8 +66,6 @@ https://github.com/picocss/pico/blob/master/css/themes/default.css
 It was noted that the UI only allows up to 5 endorsements, but the API is allowing me to go alot further than that!
 
 [Title](https://github.com/mastodon/mastodon/issues/8162)
-
-
 
 There's even discussion of "endorsed content", too! Oh - this is at the admin level tho, not end users.
 
