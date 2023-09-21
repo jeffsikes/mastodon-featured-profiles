@@ -462,7 +462,6 @@ var app = Vue.createApp({
         alert("error setting account endorsement");
       } else {
         const data = await response.json();
-        navigator.vibrate(200);
         return data;
       }
 
@@ -477,7 +476,6 @@ var app = Vue.createApp({
         alert("error removing account endorsement");
       } else {
         const data = await response.json();
-        navigator.vibrate(200);
         return data;
       }
 
