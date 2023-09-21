@@ -193,8 +193,8 @@ img.avatar {
 }
 
 .followed-container article {
-  width: 200px;
-  flex-basis: 200px;
+  width: 150px;
+  flex-basis: 150px;
   flex-grow: 1;
 }
 
