@@ -28,8 +28,15 @@
                 <li></li>
               </ul>
             </nav>
-          </header>
-          <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true" id="readOnlyModal" open>
+            <div class="title">
+              <h1>Mastodon Featured Profiles</h1>
+              <span>
+                A streamlined tool for easier management of your featured
+                profiles.
+              </span>
+              </div>
+            </header>
+          <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true" id="readOnlyModal">
             <article>
               <h2>You are logged in with read only access</h2>
               <p>
@@ -46,15 +53,7 @@
               </footer>
             </article>
           </dialog>
-          <div v-if="mastodon && !mastodon.loggedIn()">
-            <hgroup>
-              <h1>Mastodon Featured Profiles</h1>
-              <p>
-                A streamlined tool for easier management of your featured
-                profiles.
-              </p>
-            </hgroup>
-
+        <div v-if="mastodon && !mastodon.loggedIn()">
             <hr />
 
             <h3>Login with Mastodon</h3>
@@ -149,13 +148,13 @@
           <div class="banner" :style="{backgroundImage: `url(${profile.header})`}"  >
             <div class="profile-account-info" >
               <div>
-                <img class="avatar" :src="profile.avatar" :alt="profile.display_name" loading="lazy"/>
+                <img class="avatar" :src="profile.avatar" alt="Avatar" loading="lazy"/>
               </div>
                 <span v-if="profile.display_name" class="account-display-name">{{ profile.display_name }}</span><br/>
                 <a :href="profile.url" target="_blank" rel="me noopener">
-                  <span v-if="profile.bot" alt="Bot Account">🤖 </span>@{{profile.acct }}
-                  <span v-if="profile.group" alt="Group Account">👥 </span>
-                  <span v-if="profile.memorial" alt="Memorial Account">🌸 </span>@{{profile.acct }}
+                  <span v-if="profile.bot" data-tooltip="Automated Account" alt="Automated Account">🤖 </span>
+                  <span v-if="profile.group" data-tooltip="Group Account" alt="Group Account">👥 </span>
+                  <span v-if="profile.memorial" data-tooltip="Memorial Account" alt="Memorial Account">🌸 </span>@{{profile.acct }}
                 </a><br/>
               <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span><span class="account-followers" v-else>0 Followers</span>,
               <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span><span v-else class="account-following">0 Following</span>
@@ -185,13 +184,13 @@
       </div>
       <div v-if="this.endorsements.length == 0">
         <hgroup>
-          <h4>You have no profiles currently selected.</h4>
+          <p><strong>You have no profiles currently selected.</strong></p>
           <p v-else>Search your followed accounts for profiles to feature.</p>
         </hgroup>
       </div>
       <div v-else>
         <hgroup>
-          <h4>You have {{ this.$root.my_endorsements.length }} featured profile<span v-if="this.$root.my_endorsements.length > 1">s</span>.</h4>
+          <p><strong>You have {{ this.$root.my_endorsements.length }} featured profile<span v-if="this.$root.my_endorsements.length > 1">s</span>.</strong></p>
           <p>Search your followed accounts for a profile to feature.</p>
         </hgroup>
       </div>
@@ -200,7 +199,7 @@
 
        <article class="endorsed item" v-for="endorsement in filteredEndorsements" :id="endorsement.id" :key="endorsement.id" :style="{backgroundImage: `url(${endorsement.header})`}">
           <div class="account-info">
-            <img class="avatar" :src="endorsement.avatar" :alt="endorsement.display_name" loading="lazy" />
+            <img class="avatar" :src="endorsement.avatar" alt="Avatar" loading="eager" />
             <div style="text-align:center;">
               <div v-if="endorsement.display_name" class="account-display-name" style="display:flex; align-items:center; justify-content:center;" v-html="this.$root.parse_emojis(endorsement.display_name, endorsement.emojis)"></div>
               <p>
@@ -229,17 +228,18 @@
       <p>Loading {{ this.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
     </div>
     <div v-else>
-      <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" placeholder="Search for a profile to feature" />
-      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" placeholder="Search for a profile to feature"/>
+      <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature" />
+      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature"/>
       <div class="followed-summary">
         <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles</p>
       </div>
       <div class="followed-container" id="followed">
         <article class="followed-account followed-item border-shadow" v-for="account in this.filteredFollowed" :key="account.id" :id="account.id" >
-          <img :src="account.avatar" :alt="account.display_name" loading="lazy" />
-          <div><span v-if="account.bot" alt="Automated Account">🤖 </span>
-            <span v-if="account.group" alt="Group Account">👥 </span>
-            <span v-if="account.memorial" alt="Memorial Account">🌸 </span>
+          <img :src="account.avatar" alt="Avatar" loading="lazy" />
+          <div>
+            <span v-if="account.bot" data-tooltip="Automated Account" alt="This is an automated account">🤖 </span>
+            <span v-if="account.group" data-tooltip="Group Account" alt="This is a group account">👥 </span>
+            <span v-if="account.memorial" data-tooltip="Memorial Account" alt="This is a memorial account">🌸 </span>
             <span>{{ account.display_name }}</span>
           </div>
           <div>

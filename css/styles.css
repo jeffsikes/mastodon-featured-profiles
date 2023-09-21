@@ -76,11 +76,14 @@ form {
   padding: 0px;
 }
 
+header .title {
+  text-align:center;
+}
+
 header .banner {
   border-radius: 0.5em;
   height: 250px;
   background-size: 100%;
-  background-color: #2f0c7a;
 }
 
 .profile-note {
@@ -256,6 +259,7 @@ img.avatar {
 .endorsed {
   border-radius: 0.5em;
   background-color: #858afa;
+  padding:25px;
 }
 
 .endorsed .account-info {
@@ -268,6 +272,7 @@ img.avatar {
 }
 
 .endorsed .avatar {
+  margin-top:10px;
   opacity: 100%;
   margin-bottom: 10px;
   width: 50px;
@@ -292,6 +297,7 @@ img.avatar {
   text-align: center;
   margin-top: 50px;
   margin-bottom: 50px;
+  padding-bottom:50px;
 }
 
 .endorsed-container,
@@ -300,14 +306,13 @@ main {
   flex-direction: row;
   flex-wrap: wrap;
   flex-flow: row wrap;
-  justify-content: left;
+  justify-content: center;
   align-items: flex-start;
   align-content: space-between;
   gap: 20px 40px;
 }
 
 .endorsed-container article {
-  box-shadow: 4px 5px 2px 1px rgba(0, 0, 255, 0.2);
   flex-grow: 1;
   flex-basis: auto;
   border-top-left-radius: 25px;

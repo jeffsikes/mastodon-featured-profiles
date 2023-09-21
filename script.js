@@ -87,6 +87,8 @@ var app = Vue.createApp({
       }
 
       this.refresh(this.user_id, forceRefresh);
+
+      this.showModal();
     }
   },
 
@@ -156,8 +158,18 @@ var app = Vue.createApp({
     logout() {
       this.mastodon.logout();
       localStorage.clear();
+      sessionStorage.clear();
       window.location.hash = "";
       window.location.reload();
+    },
+
+    showModal() {
+      if (sessionStorage.modalViewed != "true" && this.userPreferences.read_only == true) {
+        var modal = document.getElementById("readOnlyModal");
+        modal.setAttribute("class", "modal-is-opening")
+        modal.setAttribute("open", "");
+        sessionStorage.modalViewed = true;
+      }
     },
 
     hideModal() {
@@ -450,6 +462,7 @@ var app = Vue.createApp({
         alert("error setting account endorsement");
       } else {
         const data = await response.json();
+        navigator.vibrate(200);
         return data;
       }
 
@@ -464,6 +477,7 @@ var app = Vue.createApp({
         alert("error removing account endorsement");
       } else {
         const data = await response.json();
+        navigator.vibrate(200);
         return data;
       }
 
