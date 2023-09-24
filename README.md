@@ -17,8 +17,6 @@ I've tested it with my personal mastodon server, it may or may not work with oth
 
 I wanted to learn about Mastodon - how to authenticate, how to pull data down, how to display it in a format that makes sense.
 
-It's not production ready. This is just a local development toy.
-
 You can use it however you want.
 
 ### How to start
@@ -31,6 +29,11 @@ python3 -m http.server 8081
 
 Then open http://localhost:8081 in your browser.
 
+### Maintenance
+Right now this is just a hobby. I don't know if I will continue to fiddle with it. 
+
+You are welcome to download, clone or fork this and make it your own. I'd love to hear what you're doing with it!
+
 ### Tiny Mastodon Library
 The site contains a tiny Mastodon library called `mastodon.js` for logging in with
 OAuth and making requests. You can see some examples of how to use it in `script.js`.
@@ -38,11 +41,6 @@ OAuth and making requests. You can see some examples of how to use it in `script
 This code relies heavily on the work of [Julia Evans](https://mastodon.social/@b0rk), who [created this miniscule Mastodon Library](https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library) that authenticates requests and makes a few calls.
 
 I built on this base and added more calls to retrieve various timelines, hashtags, lists, etc.
-
-### Maintenance
-Right now this is just a hobby. I don't know if I will continue to fiddle with it. 
-
-You are welcome to download, clone or fork this and make it your own. I'd love to hear what you're doing with it!
 
 ### PicoCss
 
