@@ -2,6 +2,8 @@
 
 A streamlined tool for easier management of your featured profiles. [Use it now](https://featured-profiles.box464.com), or [learn more about it](https://box464.com/featured-profiles) first.
 
+<img src="/images/featured_profile_screenshot.png" height="200" alt="Screenshot of Featured Profiles app"/>
+
 ## What is it?
 
 Mastodon's featured profiles is a way to highlight your most beloved followed accounts, but was partially removed in a previous upgrade.
