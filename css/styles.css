@@ -56,16 +56,37 @@ body > * {
   max-width: 950px;
 }
 
-form {input {
-  font-size: 12px;
+form {
+  margin-bottom: 50px;
+}
+
+input {
+  font-size: 16px;
 }
 
 
-  margin-bottom: 50px;
+hr {
+  border: 0;
+  height: 0; /* Firefox... */
+  box-shadow: 0 0 10px 4px var(--pico-primary-underline);
+}
+hr:after {  /* Not really supposed to work, but does */
+  content: "\00a0";  /* Prevent margin collapse */
+}
+
+img.figure {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  border:solid 1px var(--pico-primary-inverse);
 }
 
 .btn-login {
   width: 150px;
+}
+
+li.logoutLink {
+  display:none;
 }
 
 .account article {
@@ -287,6 +308,29 @@ img.avatar {
   margin-bottom: 15px;
   margin-top: 10px;
   padding: 5px;
+}
+
+.callout-main {
+  background-color: var(--pico-primary-focus);
+  margin-bottom: 15px;
+  margin-top: 10px;
+  border: solid 1px #7540bf;
+  border-radius: 10px;
+  padding:20px;
+}
+
+.callout-blog {
+  background-color: var(--pico-primary-focus);
+
+}
+
+.callout {
+  margin-bottom: 15px;
+  margin-top: 10px;
+  background-color: #2f0c7a;
+  border: solid 1px #7540bf;
+  border-radius: 10px;
+  padding:20px;
 }
 
 .active {

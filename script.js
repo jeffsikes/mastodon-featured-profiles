@@ -22,12 +22,15 @@ var app = Vue.createApp({
       refresh_interval: 120, // minutes
       followed_threshold: 400,
       followed_search: "",
+      debug_enabled: false,
+      public_root_url: "https://featured-profiles.box464.com/",
+      public_statistics_url: "https://fp-stats.box464.com"
     };
   },
 
   computed: {
     computedAuthorizedScope() {
-      console.log("read only value", this.userPreferences.read_only);
+      this.logger("read only value", this.userPreferences.read_only);
       if (
         this.userPreferences &&
         this.userPreferences.read_only != null &&
@@ -55,7 +58,7 @@ var app = Vue.createApp({
   async created() {
     this.mastodon = await Mastodon.initialize({
       app_name: "Featured Profiles Lab",
-      app_url: "https://featured-profiles.netlify.app/",
+      app_url: this.public_root_url,
       // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
 
       scopes: this.userPreferences.read_only
@@ -64,7 +67,7 @@ var app = Vue.createApp({
     });
 
     if (!this.mastodon.loggedIn()) {
-      console.log("not logged in");
+      this.logger("not logged in");
       if (localStorage.mastodon_servers != null) {
         this.servers = JSON.parse(localStorage.mastodon_servers);
       } else {
@@ -104,7 +107,7 @@ var app = Vue.createApp({
 
   methods: {
     async refresh(userId, forceRefresh = false) {
-      console.log("refresh", userId);
+      this.logger("refresh", userId);
       this.loading_followed = true;
       this.loading_endorsements = true;
 
@@ -151,9 +154,9 @@ var app = Vue.createApp({
         last_refresh: new Date(),
       });
 
-      console.log("my_account", this.my_account);
-      console.log("my_endorsements", this.my_endorsements);
-      console.log("my_followed", this.my_followed);
+      this.logger("my_account", this.my_account);
+      this.logger("my_endorsements", this.my_endorsements);
+      this.logger("my_followed", this.my_followed);
     },
     logout() {
       this.mastodon.logout();
@@ -191,13 +194,24 @@ var app = Vue.createApp({
       }
     },
 
+    async logger(item1, item2) {
+      if (this.debug_enabled && this.debug_enabled == true) {
+        if (item2 != null) {
+          console.log(item1, item2);
+        } else {
+          console.log(item1);
+        }
+      }
+
+    },
+
     async get_servers() {
       const response = await this.mastodon.get_servers();
       if (!response.ok) {
         alert("error getting servers");
       }
       const data = await response.json();
-      console.log("servers: ", data.data);
+      this.logger("servers: ", data.data);
       return data.data;
     },
 
@@ -231,7 +245,7 @@ var app = Vue.createApp({
         const data = await response.json();
 
         localStorage.my_account = JSON.stringify(data);
-        console.log("account data: ", data);
+        this.logger("account data: ", data);
         return data;
       }
     },
@@ -268,7 +282,7 @@ var app = Vue.createApp({
         }
       }
 
-      console.log("get account endorsements: ", data);
+      this.logger("get account endorsements: ", data);
 
       this.loading_endorsements = false;
 
@@ -296,18 +310,18 @@ var app = Vue.createApp({
           this.$root.followed_threshold &&
         this.$root.my_account.following_count > 0
       ) {
-        console.log("Reached 01");
+        this.logger("Reached 01");
         if (readOnly == false || readOnly == true) {
-          console.log("Reached 02");
+          this.logger("Reached 02");
           if (
             forceRefresh == false &&
             localStorage.my_followed &&
             localStorage.my_followed.length > 0
           ) {
-            console.log("Reached 03");
+            this.logger("Reached 03");
             data = JSON.parse(localStorage.my_followed);
           } else {
-            console.log("Reached 04");
+            this.logger("Reached 04");
             this.$root.loading_followed = true;
 
             const response = await this.mastodon.get(
@@ -330,8 +344,8 @@ var app = Vue.createApp({
                   next = this.parse_link_header(response.headers.get("link"));
                   this.$root.total_followed_loaded = data.length;
 
-                  console.log("currentLength", data.length);
-                  console.log("next", next);
+                  this.logger("currentLength", data.length);
+                  this.logger("next", next);
                 }
               }
 
@@ -395,8 +409,8 @@ var app = Vue.createApp({
 
             currentDataLength = newData.length;
 
-            console.log("currentLength", currentDataLength);
-            console.log("currentOffset", currentOffset);
+            this.logger("currentLength", currentDataLength);
+            this.logger("currentOffset", currentOffset);
           }
 
           return data;
@@ -418,7 +432,7 @@ var app = Vue.createApp({
       // Limited to 40 results, but can be paginated
       // Type Options = accounts, hashtags, statuses
       // New filter options: https://docs.vmst.io/infrastructure/search#search-modifiers
-      console.log("search_followed", searchValue);
+      this.logger("search_followed", searchValue);
       this.followed_search = searchValue;
 
       var data = [];
@@ -444,8 +458,8 @@ var app = Vue.createApp({
               break;
             } else {
               data.push(...newData);
-              console.log("currentLength", data.length);
-              console.log("next", next++);
+              this.logger("currentLength", data.length);
+              this.logger("next", next++);
             }
           }
         }
@@ -537,7 +551,7 @@ var app = Vue.createApp({
           return;
         }
 
-        console.log(this.computedAuthorizedScope);
+        this.logger(this.computedAuthorizedScope);
 
         if (this.userPreferences.read_only == true) {
           this.mastodon = await Mastodon.initialize({
@@ -617,7 +631,7 @@ app.component("account", {
           );
         }
 
-        console.log("tempEndorsements", tempEndorsements);
+        this.$root.logger("tempEndorsements", tempEndorsements);
 
         return tempEndorsements;
       },
@@ -704,7 +718,7 @@ app.component("account", {
           });
         }
 
-        console.log("tempFollowed", tempFollowed);
+        this.$root.logger("tempFollowed", tempFollowed);
 
         return tempFollowed;
       },
@@ -713,7 +727,7 @@ app.component("account", {
       getFollowedAccounts() {
         let tempFollowed = [];
 
-        if (this.searchValue && this.searchValue.length >= 3) {
+        if (this.searchValue && this.searchValue.length >= 2) {
           this.$root
             .search_accounts(this.searchValue, true)
             .then((finalResult) => {
@@ -728,23 +742,22 @@ app.component("account", {
                 }
               });
 
-              console.log("tempFollowedMapped", tempFollowed);
+              this.$root.logger("tempFollowedMapped", tempFollowed);
 
               this.$root.my_followed = tempFollowed;
 
-              console.log("temp1", this.filteredFollowed);
+              this.$root.logger("temp1", this.filteredFollowed);
             });
         } else {
-          console.log("tempManualFollowed", this.filteredFollowed);
+          this.$root.logger("tempManualFollowed", this.filteredFollowed);
           this.filteredFollowed = this.filteredFollowed;
 
           this.followed = this.filteredFollowed;
 
-          console.log("temp2", this.filteredFollowed);
+          this.$root.logger("temp2", this.filteredFollowed);
         }
       },
       pin(id) {
-        console.log("pin", id);
         const index = this.followed.findIndex((item) => item.id === id);
         // add the item to the followed list
         this.$root

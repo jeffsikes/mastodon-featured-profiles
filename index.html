@@ -16,26 +16,25 @@
         <main class="container">
           <header class="container">
             <nav>
-              <ul></ul>
               <ul>
+                <li>&nbsp;</li>
+              </ul>
+              <ul>
+                <li><a href="./index.html">Home</a></li>
+                <li><a href="./about.html">About</a></li>
                 <li v-if="mastodon && mastodon.loggedIn()">
-                  <a @click="this.refresh(this.$root.user_id, true)">Refresh</a>
+                  <a href="#" @click="logout()">Logout</a>
                 </li>
-                <li v-if="mastodon && mastodon.loggedIn()">|</li>
-                <li v-if="mastodon && mastodon.loggedIn()">
-                  <a @click="logout()">Logout</a>
-                </li>
-                <li></li>
               </ul>
             </nav>
-            <div class="title">
-              <h1>Mastodon Featured Profiles</h1>
-              <span>
-                A streamlined tool for easier management of your featured
-                profiles.
-              </span>
-              </div>
-            </header>
+          <div class="title">
+            <h1>Mastodon Featured Profiles</h1>
+            <span>
+              A streamlined tool for easier management of your featured
+              profiles.
+            </span>
+            </div>
+          </header>
           <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true" id="readOnlyModal">
             <article>
               <h2>You are logged in with read only access</h2>
@@ -54,9 +53,18 @@
             </article>
           </dialog>
         <div v-if="mastodon && !mastodon.loggedIn()">
-            <hr />
+            <div class="callout-main">
+              <p>
+                Mastodon's featured profiles is a way to highlight your most loved followed accounts, but was partially removed in a previous upgrade. 
+              </p>
 
-            <h3>Login with Mastodon</h3>
+              <p>This application provides a way to view and manage your featured profiles in preparation for a possible revival (see roadmap item <a href="https://joinmastodon.org/roadmap" target="_source">MAS-13</a>).</p>
+
+              <span>ℹ️</span> <a href="/about.html">Learn more</a>
+
+            </div>
+
+            <h2>Login with Mastodon</h2>
 
             <form @submit.prevent="login">
               <label id="mastodon-instance-label" for="mastodon-instance">
@@ -122,21 +130,28 @@
           </div>
         </main>
         <footer class="container page-footer">
-          Made by
-          <a href="https://box464.com" rel="me" target="_blank" rel="noopener"
-            >Jeff Sikes</a
-          >
-          (<a
-            href="https://mastodon.social/@box464"
-            rel="noopener"
-            target="_blank"
-            >@box464</a
-          >). Source on
-          <a
-            class="underline text-green-800"
-            href="https://github.com/jeffsikes/mastodon-threaded-replies"
-            >GitHub</a
-          >.<br />
+          <div class="callout">
+            Want to support this work?<br/>
+            Give a few dollars to your favorite instance or charity instead. If you feel like it, <a href="https://mastodon.social/@box464">let me know</a>. ❤️ <br/>
+            That would make me happy and provide incentive to keep tinkering.
+          </div>
+          <div>
+            Made by
+            <a href="https://box464.com" rel="me" target="_blank" rel="noopener"
+              >Jeff Sikes</a
+            >
+            (<a
+              href="https://mastodon.social/@box464"
+              rel="noopener"
+              target="_blank"
+              >@box464</a
+            >). Source on
+            <a
+              class="underline text-green-800"
+              href="https://github.com/jeffsikes/mastodon-threaded-replies"
+              >GitHub</a
+            >.<br />
+            </div>
         </footer>
       </div>
     </div>
@@ -175,7 +190,7 @@
     </div>
     <div v-else>
       <div v-if="this.$root.my_endorsements.length > this.$root.max_displayed_endorsements">
-        <p class="highlight">You have {{ this.$root.my_endorsements.length }} featured profiles.</p>
+        <p class="highlight">You have {{ this.$root.my_endorsements.length }} featured profiles. <mark><a class="small_action" href="#" @click="this.$root.refresh(this.$root.user_id, true)">Refresh</a></mark></p> 
         <p id="endorsed-descritpion">The first {{ this.filteredEndorsements.length }} are displayed. Search for a specific profile, or display them all.</p>
         <input id="search-input-endorsed" type="search" v-model="searchValue" placeholder="Search your featured profiles" aria-label="Search Featured Profiles" aria-describedby="endorsed-description" />
         <div class="endorsed-summary">
@@ -184,13 +199,15 @@
       </div>
       <div v-if="this.endorsements.length == 0">
         <hgroup>
-          <p><strong>You have no profiles currently selected.</strong></p>
-          <p v-else>Search your followed accounts for profiles to feature.</p>
+          <p><strong>You have no profiles currently selected.</strong> <mark><a href="#" class="small_action" @click="this.$root.refresh(this.$root.user_id, true)">Refresh</a></mark>
+          </p>
+          <p>Search your followed accounts for profiles to feature.</p>
         </hgroup>
       </div>
       <div v-else>
         <hgroup>
-          <p><strong>You have {{ this.$root.my_endorsements.length }} featured profile<span v-if="this.$root.my_endorsements.length > 1">s</span>.</strong></p>
+          <p><strong>You have {{ this.$root.my_endorsements.length }} featured profile<span v-if="this.$root.my_endorsements.length > 1">s</span>.</strong> <mark><a class="small_action" href="#" @click="this.$root.refresh(this.$root.user_id, true)">Refresh</a></mark>
+          </p>
           <p>Search your followed accounts for a profile to feature.</p>
         </hgroup>
       </div>
@@ -211,7 +228,7 @@
             </div>
             <div class="endorsed-action">
               <a v-if="this.$root.userPreferences.read_only == true" target="_followed" role="button" class="secondary unpin" :href="'https://' + this.$root.userPreferences.server + '/@' + endorsement.acct" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</a>
-              <button v-else class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
+              <button id="btnUnpin" v-else class="secondary unpin" @click="unpin(endorsement.id)" :aria-label="`Remove featured profile for ${ endorsement.acct }`">Remove</button>
             </div>
           </div>
         </article>
@@ -231,7 +248,7 @@
       <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature" />
       <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature"/>
       <div class="followed-summary">
-        <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles</p>
+        <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles <mark><a class="small_action" href="#" @click="this.$root.refresh(this.$root.user_id, true)">Refresh</a></mark></p>
       </div>
       <div class="followed-container" id="followed">
         <article class="followed-account followed-item border-shadow" v-for="account in this.filteredFollowed" :key="account.id" :id="account.id" >
@@ -248,7 +265,7 @@
           <footer>
         <div  class="pin">
           <a v-if="this.$root.userPreferences.read_only == true"  target="_followed" role="button" :href="'https://' + this.$root.userPreferences.server + '/@' + account.acct" :aria-label="`Feature profile for ${ account.acct }`">Feature</a>
-          <button v-else  v-on:click="pin(account.id)">Feature</button>
+          <button id="btnPin" v-else  v-on:click="pin(account.id)">Feature</button>
           </div>
           </footer>
       </article>
