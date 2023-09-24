@@ -13,8 +13,8 @@ class Mastodon {
   }
 
   restore() {
-    if (sessionStorage.getItem(this.options.app_name)) {
-      const data = JSON.parse(sessionStorage.getItem(this.options.app_name));
+    if (localStorage.getItem(this.options.app_name)) {
+      const data = JSON.parse(localStorage.getItem(this.options.app_name));
       this.clientId = data.clientId;
       this.clientSecret = data.clientSecret;
       this.instanceURL = data.instanceURL;
@@ -23,7 +23,7 @@ class Mastodon {
   }
 
   save() {
-    sessionStorage.setItem(
+    localStorage.setItem(
       this.options.app_name,
       JSON.stringify({
         clientId: this.clientId,
@@ -35,7 +35,7 @@ class Mastodon {
   }
 
   logout() {
-    sessionStorage.removeItem(this.options.app_name);
+    localStorage.removeItem(this.options.app_name);
     this.clientId = undefined;
     this.clientSecret = undefined;
     this.instanceURL = undefined;
