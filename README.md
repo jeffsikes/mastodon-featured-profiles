@@ -4,7 +4,7 @@ A streamlined tool for easier management of your featured profiles. [Use it now]
 
 ## What is it?
 
-Mastodon's featured profiles is a way to highlight your most loved followed accounts, but was partially removed in a previous upgrade.
+Mastodon's featured profiles is a way to highlight your most beloved followed accounts, but was partially removed in a previous upgrade.
 
 Currently, this is a zombie feature. Profiles can be marked as featured through the web interface, but there's no way for others to view them. In their previous existence, a random set of your selections would appear on your public facing profile page for others to view, similar to how featured hashtags currently behave.
 
