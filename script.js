@@ -556,7 +556,7 @@ var app = Vue.createApp({
         if (this.userPreferences.read_only == true) {
           this.mastodon = await Mastodon.initialize({
             app_name: "Featured Profiles Lab",
-            app_url: "https://featured-profiles.netlify.app/",
+            app_url: this.public_root_url,
             // best docs for scopes is here: https://github.com/mastodon/mastodon/pull/7929
             scopes: "read:accounts read:follows",
           });
