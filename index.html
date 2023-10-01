@@ -1,164 +1,133 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="stylesheet" href="css/pico.min.css" />
-    <link rel="stylesheet" href="css/styles.css" />
-    <title>Mastodon Featured Profiles Lab</title>
-    <script src="lib/vue.global.prod.js" defer></script>
-    <script src="mastodon.js" defer></script>
-    <script src="script.js" defer></script>
-    <script data-goatcounter="https://fp-stats.goatcounter.com/count"
-    async src="//gc.zgo.at/count.js"></script>
-  </head>
-  <body>
-    <div id="app">
-      <div class="container root">
-        <main class="container">
-          <header class="container">
-            <nav>
-              <ul>
-                <li>&nbsp;</li>
-              </ul>
-              <ul>
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="./about.html">About</a></li>
-                <li v-if="mastodon && mastodon.loggedIn()">
-                  <a href="#" @click="logout()">Logout</a>
-                </li>
-              </ul>
-            </nav>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="css/pico.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <title>Mastodon Featured Profiles Lab</title>
+  <script src="lib/vue.global.prod.js" defer></script>
+  <script src="mastodon.js" defer></script>
+  <script src="script.js" defer></script>
+  <script data-goatcounter="https://fp-stats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="container root">
+      <main class="container">
+        <header class="container">
+          <nav>
+            <ul>
+              <li>&nbsp;</li>
+            </ul>
+            <ul>
+              <li><a href="./index.html">Home</a></li>
+              <li><a href="./about.html">About</a></li>
+              <li v-if="mastodon && mastodon.loggedIn()">
+                <a href="#" @click="logout()">Logout</a>
+              </li>
+            </ul>
+          </nav>
           <div class="title">
             <h1>Mastodon Featured Profiles</h1>
             <span>
               A streamlined tool for easier management of your featured
               profiles.
             </span>
-            </div>
-          </header>
-          <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true" id="readOnlyModal">
-            <article>
-              <h2>You are logged in with read only access</h2>
-              <p>
-                To add or remove featured profiles, you'll need to do so directly on your Mastodon instance.
-              </p>
-              <p>
-                From a profile page, select the action from the secondary menu, then refresh this page to see the update. 
-              </p>
+          </div>
+        </header>
+        <dialog v-if="this.$root.userPreferences.read_only && this.$root.userPreferences.read_only === true"
+          id="readOnlyModal">
+          <article>
+            <h2>You are logged in with read only access</h2>
+            <p>
+              To add or remove featured profiles, you'll need to do so directly on your Mastodon instance.
+            </p>
+            <p>
+              From a profile page, select the action from the secondary menu, then refresh this page to see the update.
+            </p>
 
-              <img src="/images/profile_example.png" alt="Profile Example" style="width:100%; max-width:300px; margin: 0 auto; display:block;"/>
+            <img src="/images/profile_example.png" alt="Profile Example"
+              style="width:100%; max-width:300px; margin: 0 auto; display:block;" />
 
-              <footer>
-                <button @click="hideModal()" >Understood</button>
-              </footer>
-            </article>
-          </dialog>
+            <footer>
+              <button @click="hideModal()">Understood</button>
+            </footer>
+          </article>
+        </dialog>
         <div v-if="mastodon && !mastodon.loggedIn()">
-            <div class="callout-main">
-              <p>
-                Mastodon's featured profiles is a way to highlight your most loved followed accounts, but was partially removed in a previous upgrade. 
-              </p>
+          <div class="callout-main">
+            <p>
+              Mastodon's featured profiles is a way to highlight your most loved followed accounts, but was partially
+              removed in a previous upgrade.
+            </p>
 
-              <p>This application provides a way to view and manage your featured profiles in preparation for a possible revival (see roadmap item <a href="https://joinmastodon.org/roadmap" target="_source">MAS-13</a>).</p>
+            <p>This application provides a way to view and manage your featured profiles in preparation for a possible
+              revival (see roadmap item <a href="https://joinmastodon.org/roadmap" target="_source">MAS-13</a>).</p>
 
-              <span>ℹ️</span> <a href="/about.html">Learn more</a>
+            <span>ℹ️</span> <a href="/about.html">Learn more</a>
 
-            </div>
+          </div>
 
-            <h2>Login with Mastodon</h2>
+          <h2>Login with Mastodon</h2>
 
-            <form @submit.prevent="login">
-              <label id="mastodon-instance-label" for="mastodon-instance">
-                Enter your Mastodon instance (also known as a server or domain)
+          <form @submit.prevent="login">
+            <label id="mastodon-instance-label" for="mastodon-instance">
+              Enter your Mastodon instance (also known as a server or domain)
+            </label>
+            <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on"
+              aria-label="Your Mastodon Instance" aria-describedby="mastodon-instance-label"
+              placeholder="mastodon.social" aria-placeholder="mastodon.social" required="" aria-required="true" />
+            <datalist id="servers">
+              <option v-for="server in servers">{{ server.domain }}</option>
+            </datalist>
+
+            <div class="read-only-scope" :class="{ active:read_only }">
+              <label>
+                <input id="mastodon-read-only-scope" v-model="read_only" type="checkbox" role="switch" />
+                Security conscious? Authorize read-only access.
               </label>
-              <input
-                type="text"
-                v-model="server"
-                id="mastodon-instance"
-                list="servers"
-                autocomplete="on"
-                aria-label="Your Mastodon Instance"
-                aria-describedby="mastodon-instance-label"
-                placeholder="mastodon.social"
-                aria-placeholder="mastodon.social"
-                required=""
-                aria-required="true"
-              />
-              <datalist id="servers">
-                <option v-for="server in servers">{{ server.domain }}</option>
-              </datalist>
-
-              <div class="read-only-scope" :class="{ active:read_only }">
-                <label>
-                  <input
-                    id="mastodon-read-only-scope"
-                    v-model="read_only"
-                    type="checkbox"
-                    role="switch"
-                  />
-                  Security conscious? Authorize read-only access.
-                </label>
-                <div>
-                  <em
-                    >Prevents managing featured profiles, but allows viewing
-                    existing selections.</em
-                  >
-                </div>
+              <div>
+                <em>Prevents managing featured profiles, but allows viewing
+                  existing selections.</em>
               </div>
-
-              <button class="btn-login" type="submit">Login</button>
-            </form>
-          </div>
-          <div v-else>
-            <article>
-              <account
-                v-if="this.loading_endorsements == false"
-                :profile="this.my_account"
-                :followed="this.my_followed"
-                :endorsements="this.my_endorsements"
-              ></account>
-              <endorsements
-                :endorsements="this.my_endorsements"
-                :loading_endorsements="this.loading_endorsements"
-                :total_endorsements_loaded="this.total_endorsements_loaded"
-              ></endorsements>
-              <followed
-                :followed="this.my_followed"
-                :loading_followed="this.loading_followed"
-                :total_followed_loaded="this.total_followed_loaded"
-              ></followed>
-            </article>
-          </div>
-        </main>
-        <footer class="container page-footer">
-          <div class="callout">
-            Want to support this work?<br/>
-            Give a few dollars to your favorite instance or charity instead. If you feel like it, <a href="https://mastodon.social/@box464">let me know</a>. ❤️ <br/>
-            That would make me happy and provide incentive to keep tinkering.
-          </div>
-          <div>
-            Made by
-            <a href="https://box464.com" rel="me" target="_blank" rel="noopener"
-              >Jeff Sikes</a
-            >
-            (<a
-              href="https://mastodon.social/@box464"
-              rel="noopener"
-              target="_blank"
-              >@box464</a
-            >). Source on
-            <a
-              class="underline text-green-800"
-              href="https://github.com/jeffsikes/mastodon-threaded-replies"
-              >GitHub</a
-            >.<br />
             </div>
-        </footer>
-      </div>
+
+            <button class="btn-login" type="submit">Login</button>
+          </form>
+        </div>
+        <div v-else>
+          <article>
+            <account v-if="this.loading_endorsements == false" :profile="this.my_account" :followed="this.my_followed"
+              :endorsements="this.my_endorsements"></account>
+            <endorsements :endorsements="this.my_endorsements" :loading_endorsements="this.loading_endorsements"
+              :total_endorsements_loaded="this.total_endorsements_loaded"></endorsements>
+            <followed :followed="this.my_followed" :loading_followed="this.loading_followed"
+              :total_followed_loaded="this.total_followed_loaded"></followed>
+          </article>
+        </div>
+      </main>
+      <footer class="container page-footer">
+        <div class="callout">
+          Want to support this work?<br />
+          Give a few dollars to your favorite instance or charity instead. If you feel like it, <a
+            href="https://mastodon.social/@box464">let me know</a>. ❤️ <br />
+          That would make me happy and provide incentive to keep tinkering.
+        </div>
+        <div>
+          Made by
+          <a href="https://box464.com" rel="me" target="_blank" rel="noopener">Jeff Sikes</a>
+          (<a href="https://mastodon.social/@box464" rel="noopener" target="_blank">@box464</a>). Source on
+          <a class="underline text-green-800"
+            href="https://github.com/jeffsikes/mastodon-featured-profiles">GitHub</a>.<br />
+        </div>
+      </footer>
     </div>
-  </body>
-  <script type="text/x-template" id="account-template">
+  </div>
+</body>
+<script type="text/x-template" id="account-template">
     <div class="account">
       <article>
         <header>
@@ -185,7 +154,7 @@
     </div>
   </script>
 
-  <script type="text/x-template" id="endorsements-template">
+<script type="text/x-template" id="endorsements-template">
     <h2 style="padding-top:20px;">Featured Profiles</h2>
     <div v-if="loading_endorsements == true">
       <p>Loading {{ this.$root.total_endorsements_loaded }} of {{ this.$root.my_endorsements.length }} featured profiles...</p>
@@ -241,7 +210,7 @@
     </div>
   </script>
 
-  <script type="text/x-template" id="followed-template">
+<script type="text/x-template" id="followed-template">
     <h2>Followed Accounts</h2>
     <div v-if="loading_followed == true">
       <p>Loading {{ this.total_followed_loaded }} of {{ this.$root.my_account.following_count }} followed accounts...</p>
@@ -276,4 +245,5 @@
       <article class="followed-placeholder"></article>
     </div>
   </script>
+
 </html>

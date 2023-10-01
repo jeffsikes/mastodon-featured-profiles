@@ -1,148 +1,159 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="stylesheet" href="css/pico.min.css" />
-    <link rel="stylesheet" href="css/styles.css" />
-    <title>Mastodon Featured Profiles Lab</title>
-    <script data-goatcounter="https://fp-stats.goatcounter.com/count"
-    async src="//gc.zgo.at/count.js"></script>
-  </head>
-  <body>
-    <div id="app">
-      <div class="container root">
-        <main class="container">
-          <header class="container">
-            <nav>
-              <ul>
-                <li>&nbsp;</li>
-              </ul>
-              <ul>
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="./about.html">About</a></li>
-                <li id="logoutLink">
-                  <a href="#" onClick="logout();">Logout</a>
-                </li>
-              </ul>
-            </nav>
-              <div class="title">
-              <h1>Mastodon Featured Profiles</h1>
-              <span>
-                A streamlined tool for easier management of your featured
-                profiles.
-              </span>
-              </div>
-            </header>
-            <article>
-              <div>
-              <h2>What are Featured Profiles?</h2>
-              <p>
-                Featured Profiles were a way to highlight exceptional followed accounts.</p>
-                <p>You can currently still deem a followed profile as featured, but you can't view your selections anywhere.
-              </p>
-              <p>
-                This is a Mastodon specific feature. 
-              </p>
-              <mark class="callout-blog">
-                I've written <a href="https://box464.com/featured_profiles" target="_source">a blog post</a> about the history of featured profiles and go into more detail about the topic if you're interested.
-              </mark>
 
-              <h3>What does this application do?</h3>
-              <p>
-                This application allows you to easily view, add and remove featured profiles from your account. 
-              </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="css/pico.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <title>Mastodon Featured Profiles Lab</title>
+  <script data-goatcounter="https://fp-stats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
 
-              <div class="callout">
-                <p>Like the idea of Featured Profiles? Let the developers know (requires GitHub login).</p>
-                <a class="button" role="button" href="https://github.com/mastodon/mastodon/issues/21270" target="_source">👍🏽 Give a thumbs up</a>
-              </div> 
-
-              <h2>What permissions are you asking for?</h2>
-              <p>
-                When you login, you will be asked to allow the application to have specific permissions to your account.
-              </p>
-
-              <p>
-                This tool requires access to make updates to your account for full functionality. 
-                It will not take any actions on your account other than managing your featured profiles and listing your followed accounts. 
-              </p>
-
-              <img src="images/authorizations.png" class="figure" alt="Screenshot of the authorization screen" loading="lazy" />
-
-              <h3>I'm not comfortable giving this app access to update things on my account.</h3>
-
-              <p>
-                If you don't want to allow full permissions, you can still view your existing featured profiles. 
-                Toggle the "Security Conscious?" switch on the login page to enabled. When you login, you'll notice that Mastodon is only asking for read only access.
-              </p>
-              <p>
-                You won't be able to add or remove your featured profiles from the app this way, but you can still view them.
-              </p>
-              <p>
-                When using this mode, you'll notice you've still got the action buttons to feature or remove profiles. Clicking them takes you back to your official Mastodon instance where you can add and remove them manually. Then, come back to view them by using the refresh link in the menu.
-              </p>
-
-              <h2>Is my data secure?</h2>
-              <p>Your data is only stored in your browser's local storage, and is not sent to any external servers. The site is secured with a valid SSL certificate.</p>
-              <p>A privacy focused, open source analytics solution is installed called GoatCounter. No personal information is collected. The stats are <a href="https://fp-stats.goatcounter.com/" target="_source">publicly available</a>. It's mostly just a hit counter so I know if people are using it 😀.</p>
-
-              <h2>Why build something if it's not fully supported?</h2>
-              <p>
-                I have a lot to learn. Vue, Mastodon, and Open source are all new concepts to me. This provided a unique opportunity to get fairly detailed into an area of Mastodon that hasn't been explored lately.
-              </p>
-
-              <h2>This code is unmaintained</h2>
-              <p>
-                I really take Julia Evan's <a href="https://github.com/jvns/mastodon-threaded-replies#this-code-is-unmaintained" target="_source">code maintenance guidelines</a> to heart that are included in her small projects. 
-              </p>
-              <p>
-                When I saw these declaratives, I was initially taken aback by the tone, but I now fully admire the upfront honesty. 
-              </p>
-              <ul>
-                <li>I made this for me, to learn new things.</li>
-                <li>I know the code isn't perfect.</li>
-                <li>If you find a bug, <a href="https://github.com/jeffsikes/mastodon-featured-profiles/issues" target="_source">please let me know</a>! But don't expect them to be fixed quickly...or at all.</li>
-                <li>I'm not planning to take feature requests, but <a href="https://github.com/jeffsikes/mastodon-featured-profiles/issues" target="_source">share your ideas anyway</a>, who knows?!</li>
-                <li>It's open source under an MIT license - take it and do what you will.</li>
-              </ul>
-
-              <h2>Tell me about the code.</h2>
-              <p>You can find all the details about the technology stack and view the entire codebase on <a target="_source" href="https://github.com/jeffsikes/mastodon-featured-profiles">GitHub</a>, but here's a summary.
-                <ul>
-                  <li><a href="https://vuejs.org/" target="_source">Vue.js</a></li>
-                  <li><a href="https://v2.picocss.com/docs/v2" target="_source">PicoCSS V2</a></li>
-                  <li><a href="https://www.goatcounter.com/" target="_source">GoatCounter</a></li>
-                  <li><a href="https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library" target="_source">Julia Evan's Tiny Mastodon Library</a></li>
-                  <li><a href="https://www.netlify.com/" target="_source">Running on Netlify</a></li>
-                </ul>
-              </p>
-            </div>
-          </article>
-        </main>
-        <footer class="container page-footer">
-          <div class="callout">
-            Want to support this work?<br/>
-            Give a few dollars to your favorite instance or charity instead. If you feel like it, <a href="https://mastodon.social/@box464">let me know</a>. ❤️ <br/>
-            That would make me happy and provide incentive to keep tinkering.
+<body>
+  <div id="app">
+    <div class="container root">
+      <main class="container">
+        <header class="container">
+          <nav>
+            <ul>
+              <li>&nbsp;</li>
+            </ul>
+            <ul>
+              <li><a href="./index.html">Home</a></li>
+              <li><a href="./about.html">About</a></li>
+              <li id="logoutLink">
+                <a href="#" onClick="logout();">Logout</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="title">
+            <h1>Mastodon Featured Profiles</h1>
+            <span>
+              A streamlined tool for easier management of your featured
+              profiles.
+            </span>
           </div>
+        </header>
+        <article>
           <div>
+            <h2>What are Featured Profiles?</h2>
+            <p>
+              Featured Profiles were a way to highlight exceptional followed accounts.</p>
+            <p>You can currently still deem a followed profile as featured, but you can't view your selections anywhere.
+            </p>
+            <p>
+              This is a Mastodon specific feature.
+            </p>
+            <mark class="callout-blog">
+              I've written <a href="https://box464.com/posts/mastodon-featured-profiles/" target="_source">a blog
+                post</a> about the history of featured profiles and go into more detail about the topic if you're
+              interested.
+            </mark>
+
+            <h3>What does this application do?</h3>
+            <p>
+              This application allows you to easily view, add and remove featured profiles from your account.
+            </p>
+
+            <div class="callout">
+              <p>Like the idea of Featured Profiles? Let the developers know (requires GitHub login).</p>
+              <a class="button" role="button" href="https://github.com/mastodon/mastodon/issues/21270"
+                target="_source">👍🏽 Give a thumbs up</a>
+            </div>
+
+            <h2>What permissions are you asking for?</h2>
+            <p>
+              When you login, you will be asked to allow the application to have specific permissions to your account.
+            </p>
+
+            <p>
+              This tool requires access to make updates to your account for full functionality.
+              It will not take any actions on your account other than managing your featured profiles and listing your
+              followed accounts.
+            </p>
+
+            <img src="images/authorizations.png" class="figure" alt="Screenshot of the authorization screen"
+              loading="lazy" />
+
+            <h3>I'm not comfortable giving this app access to update things on my account.</h3>
+
+            <p>
+              If you don't want to allow full permissions, you can still view your existing featured profiles.
+              Toggle the "Security Conscious?" switch on the login page to enabled. When you login, you'll notice that
+              Mastodon is only asking for read only access.
+            </p>
+            <p>
+              You won't be able to add or remove your featured profiles from the app this way, but you can still view
+              them.
+            </p>
+            <p>
+              When using this mode, you'll notice you've still got the action buttons to feature or remove profiles.
+              Clicking them takes you back to your official Mastodon instance where you can add and remove them
+              manually. Then, come back to view them by using one of the refresh links.
+            </p>
+
+            <h2>Is my data secure?</h2>
+            <p>Your data is only stored in your browser's local storage, and is not sent to any external servers. The
+              site is secured with a valid SSL certificate.</p>
+
+            <h2>Why build something if it's not fully supported?</h2>
+            <p>
+              I have a lot to learn. Vue, Mastodon, and Open source are all new concepts to me. This provided a unique
+              opportunity to get fairly detailed into an area of Mastodon that hasn't been explored lately.
+            </p>
+
+            <h2>This code is unmaintained</h2>
+            <p>
+              I really take Julia Evan's <a
+                href="https://github.com/jvns/mastodon-threaded-replies#this-code-is-unmaintained" target="_source">code
+                maintenance guidelines</a> to heart that are included in her small projects.
+            </p>
+            <p>
+              When I saw these declaratives, I was initially taken aback by the tone, but I now fully admire the upfront
+              honesty.
+            </p>
+            <ul>
+              <li>I made this for me, to learn new things.</li>
+              <li>I know the code isn't perfect.</li>
+              <li>If you find a bug, <a href="https://github.com/jeffsikes/mastodon-featured-profiles/issues"
+                  target="_source">please let me know</a>! But don't expect them to be fixed quickly...or at all.</li>
+              <li>I'm not planning to take feature requests, but <a
+                  href="https://github.com/jeffsikes/mastodon-featured-profiles/issues" target="_source">share your
+                  ideas anyway</a>, who knows?!</li>
+              <li>It's open source under an MIT license - take it and do what you will.</li>
+            </ul>
+
+            <h2>Tell me about the code.</h2>
+            <p>You can find all the details about the technology stack and view the entire codebase on <a
+                target="_source" href="https://github.com/jeffsikes/mastodon-featured-profiles">GitHub</a>, but here's a
+              summary.
+            <ul>
+              <li><a href="https://vuejs.org/" target="_source">Vue.js</a></li>
+              <li><a href="https://v2.picocss.com/docs/v2" target="_source">PicoCSS V2</a></li>
+              <li><a href="https://www.goatcounter.com/" target="_source">GoatCounter</a></li>
+              <li><a href="https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library"
+                  target="_source">Julia Evan's Tiny Mastodon Library</a></li>
+              <li><a href="https://www.netlify.com/" target="_source">Running on Netlify</a></li>
+            </ul>
+            </p>
+          </div>
+        </article>
+      </main>
+      <footer class="container page-footer">
+        <div class="callout">
+          Want to support this work?<br />
+          Give a few dollars to your favorite instance or charity instead. If you feel like it, <a
+            href="https://mastodon.social/@box464">let me know</a>. ❤️ <br />
+          That would make me happy and provide incentive to keep tinkering.
+        </div>
+        <div>
           Made by
-          <a href="https://box464.com" rel="me" target="_blank" rel="noopener"
-            >Jeff Sikes</a
-          >
-          (<a
-            href="https://mastodon.social/@box464"
-            rel="noopener"
-            target="_blank"
-            >@box464</a
-          >). Source on
-          <a
-            class="underline text-green-800"
-            href="https://github.com/jeffsikes/mastodon-threaded-replies"
-            >GitHub</a
-          >.<br />
-        </footer>
+          <a href="https://box464.com" rel="me" target="_blank" rel="noopener">Jeff Sikes</a>
+          (<a href="https://mastodon.social/@box464" rel="noopener" target="_blank">@box464</a>). Source on
+          <a class="underline text-green-800"
+            href="https://github.com/jeffsikes/mastodon-featured-profiles">GitHub</a>.<br />
+      </footer>
       </main>
     </div>
   </div>
@@ -162,9 +173,10 @@
       localStorage.clear();
       sessionStorage.clear();
       window.location.hash = "";
-      window.location.href= "./index.html";
+      window.location.href = "./index.html";
     }
 
   </script>
 </body>
+
 </html>
