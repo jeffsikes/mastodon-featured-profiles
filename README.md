@@ -2,7 +2,7 @@
 
 A streamlined tool for easier management of your featured profiles. [Use it now](https://featured-profiles.box464.com), or [learn more about it](https://box464.com/featured-profiles) first.
 
-<img src="/images/featured_profile_screenshot.png" height="200" alt="Screenshot of Featured Profiles app"/>
+<img src="/images/featured_profile_screenshot.png" width="50%" alt="Screenshot of Featured Profiles app"/>
 
 ## What is it?
 
@@ -13,6 +13,10 @@ Currently, this is a zombie feature. Profiles can be marked as featured through 
 This application provides a way to view and manage your featured profiles in preparation for a possible revival (see roadmap item [MAS-13](https://joinmastodon.org/roadmap)).
 
 ## How to build
+
+Clone the repository or download it directly from GitHub.
+
+There's no compiler necessary.
 
 To start this locally, run:
 
