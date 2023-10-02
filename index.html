@@ -216,7 +216,7 @@
     </div>
     <div v-else>
       <input v-if="this.$root.my_account.following_count < this.$root.followed_threshold" id="search-input" type="search" v-model="searchValue" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature" />
-      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" aria-label="Search Followed Profiles" placeholder="Search for a profile to feature"/>
+      <input v-else id="search-input" type="search" v-model="searchValue" @keyup="getFollowedAccounts" aria-label="Search with a minimum of two characters in the account name." placeholder="Search with a minimum of two characters in the account name."/>
       <div class="followed-summary">
         <p>Showing {{ filteredFollowed.length }} of {{ this.$root.my_account.following_count  }} followed profiles <mark><a class="small_action" href="#" @click="this.$root.refresh(this.$root.user_id, true)">Refresh</a></mark></p>
       </div>
