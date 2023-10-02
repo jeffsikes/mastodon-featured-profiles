@@ -20,11 +20,10 @@ var app = Vue.createApp({
       max_retrieval_count: 80,
       max_displayed_endorsements: 27,
       refresh_interval: 120, // minutes
-      followed_threshold: 400,
+      followed_threshold: 550,
       followed_search: "",
       debug_enabled: false,
-      public_root_url: "https://featured-profiles.box464.com/",
-      public_statistics_url: "https://fp-stats.box464.com"
+      public_root_url: "https://featured-profiles.box464.com/"
     };
   },
 

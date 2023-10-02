@@ -10,7 +10,6 @@
   <script src="lib/vue.global.prod.js" defer></script>
   <script src="mastodon.js" defer></script>
   <script src="script.js" defer></script>
-  <script data-goatcounter="https://fp-stats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -79,7 +78,7 @@
             </label>
             <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on"
               aria-label="Your Mastodon Instance" aria-describedby="mastodon-instance-label"
-              placeholder="mastodon.social" aria-placeholder="mastodon.social" required="" aria-required="true" />
+              placeholder="" aria-placeholder="" required="" aria-required="true" />
             <datalist id="servers">
               <option v-for="server in servers">{{ server.domain }}</option>
             </datalist>
