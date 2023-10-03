@@ -32,7 +32,7 @@ To get started with contributing, follow these steps:
 2. Clone your forked repository to your local machine.
 
 ```shell
-git clone https://codeberg.org/box464/calckey-plugins.git
+git clone https://github.com/jeffsikes/mastodon-featured-profiles
 ```
 
 3. Create a new branch for your contributions.
