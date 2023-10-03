@@ -55,7 +55,7 @@ The site is built using very simplistic patterns in [Vue.js](https://vuejs.org/)
 The site contains a tiny Mastodon library called `mastodon.js` for logging in with
 OAuth and making requests. You can see some examples of how to use it in `script.js`.
 
-This code relies heavily on the work of [Julia Evans](https://mastodon.social/@b0rk), who [created this miniscule Mastodon Library](https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library) that authenticates requests and makes a few calls.
+This code relies heavily on the work of [Julia Evans](https://mastodon.social/@b0rk@jvns.ca), who [created this miniscule Mastodon Library](https://github.com/jvns/mastodon-threaded-replies#contains-a-tiny-mastodon-library) that authenticates requests and makes a few calls.
 
 I built on this base and added more calls to retrieve various timelines, hashtags, lists, etc. which is now used in my [Mastodon Starter Kit](https://mastodon-starter-vue.netlify.app/), another thing I'm tinkering with. Portions of that code were pulled into this application.
 
