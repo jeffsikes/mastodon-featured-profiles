@@ -77,8 +77,8 @@
               Enter your Mastodon instance (also known as a server or domain)
             </label>
             <input type="text" v-model="server" id="mastodon-instance" list="servers" autocomplete="on"
-              aria-label="Your Mastodon Instance" aria-describedby="mastodon-instance-label"
-              placeholder="" aria-placeholder="" required="" aria-required="true" />
+              aria-label="Your Mastodon Instance" aria-describedby="mastodon-instance-label" placeholder=""
+              aria-placeholder="" required="" aria-required="true" />
             <datalist id="servers">
               <option v-for="server in servers">{{ server.domain }}</option>
             </datalist>
@@ -118,7 +118,7 @@
         <div>
           Made by
           <a href="https://box464.com" rel="me" target="_blank" rel="noopener">Jeff Sikes</a>
-          (<a href="https://mastodon.social/@box464" rel="noopener" target="_blank">@box464</a>). Source on
+          (<a href="https://mastodon.social/@box464" rel="me noopener" target="_blank">@box464</a>). Source on
           <a class="underline text-green-800"
             href="https://github.com/jeffsikes/mastodon-featured-profiles">GitHub</a>.<br />
         </div>
