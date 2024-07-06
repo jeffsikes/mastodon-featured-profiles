@@ -89,6 +89,12 @@ li.logoutLink {
   display:none;
 }
 
+.account {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .account article {
   text-align: center;
 }
@@ -107,12 +113,13 @@ header .title {
 
 header .banner {
   border-radius: 0.5em;
-  height: 250px;
   background-size: 100%;
 }
 
 .profile-note {
   margin-top: 10px;
+  display:block;
+  padding-bottom: 10px;
 }
 
 .profile-account-info {
