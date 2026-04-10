@@ -159,7 +159,12 @@ var app = Vue.createApp({
     },
     logout() {
       this.mastodon.logout();
-      localStorage.clear();
+      localStorage.removeItem("Featured Profiles Lab");
+      localStorage.removeItem("userPreferences");
+      localStorage.removeItem("my_account");
+      localStorage.removeItem("my_endorsements");
+      localStorage.removeItem("my_followed");
+      localStorage.removeItem("mastodon_servers");
       sessionStorage.clear();
       window.location.hash = "";
       window.location.reload();
@@ -386,7 +391,7 @@ var app = Vue.createApp({
 
       if (searchTerm && searchTerm.length > 0) {
         const response = await this.mastodon.get(
-          `/api/v1/accounts/search?q=${searchTerm}&following=${followedOnly}&limit=${limit}`
+          `/api/v1/accounts/search?q=${encodeURIComponent(searchTerm)}&following=${followedOnly}&limit=${limit}`
         );
 
         if (!response.ok) {
@@ -398,7 +403,7 @@ var app = Vue.createApp({
 
           while (currentDataLength == 80) {
             const response = await this.mastodon.get(
-              `/api/v1/accounts/search?q=${searchTerm}&following=${followedOnly}&limit=80&offset=${currentOffset}`
+              `/api/v1/accounts/search?q=${encodeURIComponent(searchTerm)}&following=${followedOnly}&limit=80&offset=${currentOffset}`
             );
 
             const newData = await response.json();
@@ -438,7 +443,7 @@ var app = Vue.createApp({
       var next = this.max_retrieval_count++;
 
       var response = await this.mastodon.get(
-        `/api/v2/search?q=${searchValue}&type=${type}&following=${followedOnly}&limit=${this.max_retrieval_count}`
+        `/api/v2/search?q=${encodeURIComponent(searchValue)}&type=${type}&following=${followedOnly}&limit=${this.max_retrieval_count}`
       );
       data = await response.json();
 
@@ -450,7 +455,7 @@ var app = Vue.createApp({
           while (newData.accounts.length == this.max_retrieval_count) {
             next = next++;
             const response = await this.mastodon.get(
-              `/api/v2/search?q=${searchValue}&type=account&limit=${this.max_retrieval_count}&offset=${next}`
+              `/api/v2/search?q=${encodeURIComponent(searchValue)}&type=account&limit=${this.max_retrieval_count}&offset=${next}`
             );
             const newData = await response.json();
             if (newData.accounts.length == 0) {
@@ -483,7 +488,7 @@ var app = Vue.createApp({
 
     async remove_account_endorsement(userId) {
       const response = await this.mastodon.post(
-        `/api/v1/accounts/${userId}:/unpin`
+        `/api/v1/accounts/${userId}/unpin`
       );
       if (!response.ok) {
         alert("error removing account endorsement");
@@ -495,20 +500,45 @@ var app = Vue.createApp({
       return null;
     },
 
+    escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    },
+
+    sanitizeHtml(html) {
+      if (!html) return "";
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      doc.querySelectorAll("script, iframe, object, embed, form").forEach(el => el.remove());
+      doc.querySelectorAll("*").forEach(el => {
+        for (const attr of [...el.attributes]) {
+          if (attr.name.startsWith("on") || attr.value.trim().toLowerCase().startsWith("javascript:")) {
+            el.removeAttribute(attr.name);
+          }
+        }
+      });
+      return doc.body.innerHTML;
+    },
+
     parse_emojis(text, emojis = []) {
       if (!text) return "";
-      if (!emojis.length) return text;
-      if (text.indexOf(":") === -1) return text;
+      if (!emojis.length) return this.escapeHtml(text);
+      if (text.indexOf(":") === -1) return this.escapeHtml(text);
       // Replace shortcodes in text with emoji
       // emojis = [{ shortcode: 'smile', url: 'https://example.com/emoji.png' }]
+      text = this.escapeHtml(text);
       emojis.forEach((emoji) => {
         const { shortcode, staticUrl, url } = emoji;
+        const safeUrl = this.escapeHtml(url);
+        const safeShortcode = this.escapeHtml(shortcode);
         text = text.replace(
-          new RegExp(`:${shortcode}:`, "g"),
-          `<img style="margin-left:5px;" class="shortcode-emoji emoji" src="${url}" alt=":${shortcode}:" width="16" height="16" loading="lazy" decoding="async" />`
+          new RegExp(`:${safeShortcode}:`, "g"),
+          `<img style="margin-left:5px;" class="shortcode-emoji emoji" src="${safeUrl}" alt=":${safeShortcode}:" width="16" height="16" loading="lazy" decoding="async" />`
         );
       });
-      // console.log(text, emojis);
       return text;
     },
 
@@ -540,6 +570,13 @@ var app = Vue.createApp({
       // call out to the server to see if it is a mastodon instance
       server = server.replace("http://", "");
       server = server.replace("https://", "");
+
+      // Validate hostname - no paths, query strings, or invalid characters
+      const hostnamePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/;
+      if (!hostnamePattern.test(server)) {
+        alert("The server address contains invalid characters. Please enter a valid domain name (e.g. mastodon.social).");
+        return;
+      }
 
       try {
         const response = await fetch("https://" + server + "/api/v1/instance");

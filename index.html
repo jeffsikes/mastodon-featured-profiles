@@ -10,7 +10,7 @@
   <script src="lib/vue.global.prod.js" defer></script>
   <script src="mastodon.js" defer></script>
   <script src="script.js" defer></script>
-  <script data-goatcounter="https://fp-stats.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <script data-goatcounter="https://fp-stats.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 
 <body>
@@ -146,7 +146,7 @@
             <span v-if="profile.followers_count" class="account-followers">{{ profile.followers_count }} Followers</span><span class="account-followers" v-else>0 Followers</span>,
             <span v-if="profile.following_count" class="account-following">{{ profile.following_count }} Following</span><span v-else class="account-following">0 Following</span>
             <div class="profile-note">
-              <span v-if="profile.note" class="account-note" v-html="profile.note"></span>
+              <span v-if="profile.note" class="account-note" v-html="this.$root.sanitizeHtml(profile.note)"></span>
             </div>
         </div>
       </header>
