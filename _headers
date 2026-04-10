@@ -1,0 +1,2 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://gc.zgo.at; connect-src https:; img-src https: data:; style-src 'self' 'unsafe-inline'
